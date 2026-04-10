@@ -28,20 +28,32 @@ def _save(df: pd.DataFrame, name: str) -> None:
     logger.info("Saved %d rows -> %s", len(df), path)
 
 
-def fetch_gdelt(queries: list[str] | None = None) -> None:
-    """Pull GDELT news articles for government-spending-related queries."""
+def fetch_gdelt(queries: list[str] | None = None, days: int = 30) -> None:
+    """Pull GDELT news articles over a rolling multi-day window.s
+ 
+    Args:
+        queries: Search terms to query (defaults to core gov-spending topics).
+        days:    Lookback window in days (default 30).
+                 Use 7 for a tighter "this week" signal,
+                 30 for sustained trend detection (recommended).
+    """
     if queries is None:
         queries = [
             "government spending",
             "federal contracts",
             "government efficiency",
             "DOGE savings",
+            "federal budget cuts",
+            "government waste",
         ]
     client = GDELTClient()
-    df = client.search_multiple_queries(queries, max_records=250)
+    df = client.search_multiple_queries(queries, days=days, max_records=250)
     if not df.empty:
         _save(df, "gdelt_articles")
-
+        logger.info(
+            "GDELT: %d articles | %d-day window | %d queries",
+            len(df), days, len(queries),
+        )
 
 def fetch_sam() -> None:
     """Pull contract opportunities from SAM.gov."""
