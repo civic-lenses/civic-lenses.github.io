@@ -76,10 +76,6 @@ python scripts/classical.py             # 3b. Classical ML (TF-IDF + cosine simi
 └── requirements.txt
 ```
 
-## Requirements Checklist
-
-Tracked in [`.github/REQUIREMENTS_CHECKLIST.md`](.github/REQUIREMENTS_CHECKLIST.md).
-
 ## Team
 
 Diya Mirji · Jonas Neves · Michael Saju
