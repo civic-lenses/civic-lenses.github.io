@@ -11,8 +11,8 @@ All three must be **implemented, evaluated, and findable** in the repo.
 
 | # | Requirement | Location | Status |
 |---|-------------|----------|--------|
-| M1 | Naive baseline (majority class / mean predictor) | | ⬜ |
-| M2 | Classical (non-DL) ML model | | ⬜ |
+| M1 | Naive baseline (majority class / mean predictor) | `scripts/naive_baseline.py` | ✅ |
+| M2 | Classical (non-DL) ML model | `scripts/classical.py` | ✅ |
 | M3 | Deep learning model | | ⬜ |
 | M4 | All three documented in README with file locations | | ⬜ |
 | M5 | Rationale for each model written up in report | | ⬜ |
@@ -39,11 +39,11 @@ The experiment must directly inform or validate a modeling/system decision.
 
 > **Zero-tolerance**: if the app doesn't run when graded → **0 for this section**.
 
-- [ ] **APP1** — App exists and runs inference only (no training in app code)
+- [x] **APP1** — App exists and runs inference only (no training in app code)
 - [ ] **APP2** — Good UX — polished interface, not a bare Streamlit demo
 - [ ] **APP3** — Publicly accessible via internet (deployed URL)
 - [ ] **APP4** — Live for at least **one week** after submission date (due 2026-04-14)
-- [ ] **APP5** — Deployment URL recorded in `README.md`
+- [x] **APP5** — Deployment URL recorded in `README.md`
 
 ---
 
@@ -87,26 +87,26 @@ Format: NeurIPS/ICML-style paper, white paper, or technical report.
 
 ### Repo Structure
 
-- [ ] `README.md` — project description, setup instructions
-- [ ] `requirements.txt` — all dependencies pinned
+- [x] `README.md` — project description, setup instructions
+- [x] `requirements.txt` — all dependencies pinned
 - [ ] `setup.py` — data acquisition / project setup pipeline
 - [ ] `main.py` — entry point / app launcher
-- [ ] `scripts/make_dataset.py`
-- [ ] `scripts/build_features.py`
-- [ ] `scripts/model.py`
-- [ ] `models/` — directory exists (artifacts generated after training)
-- [ ] `data/raw/`, `data/processed/`, `data/outputs/`
+- [x] `scripts/make_dataset.py`
+- [x] `scripts/build_features.py`
+- [x] `scripts/model.py`
+- [x] `models/` — directory exists (artifacts generated after training)
+- [x] `data/raw/`, `data/processed/`, `data/outputs/`
 - [ ] `notebooks/` — directory exists
-- [ ] `.gitignore`
+- [x] `.gitignore`
 - [ ] **REPO1** — At least one exploration notebook in `notebooks/`
 
 ### Code Quality ⚠️
 
-- [ ] **CQ1** — All code modularized into classes/functions (no loose executable code)
-- [ ] **CQ2** — No executable code outside `if __name__ == "__main__"` guards
+- [x] **CQ1** — All code modularized into classes/functions (no loose executable code)
+- [x] **CQ2** — No executable code outside `if __name__ == "__main__"` guards
 - [ ] **CQ3** — Descriptive variable names throughout
 - [ ] **CQ4** — Docstrings on all public functions
-- [ ] **CQ5** — **AI usage attributed** at top of each file that used AI assistance (link to source required)
+- [x] **CQ5** — **AI usage attributed** at top of each file that used AI assistance (link to source required)
 - [ ] **CQ6** — External code/libraries attributed at top of relevant files
 
 > Note: Jupyter notebooks are allowed **only** in `notebooks/` and will not be graded directly.
@@ -118,8 +118,8 @@ Format: NeurIPS/ICML-style paper, white paper, or technical report.
 - [ ] **GIT3** — All code merged via PRs (no direct commits to `main`) — enforced by branch protection
 - [ ] **GIT4** — Every PR has a meaningful Summary — enforced by `PR Summary` CI check
 - [ ] **GIT5** — Every PR reviewed with **substantive comments** — CODEOWNER approval required
-- [ ] **GIT6** — `.env` is **never** committed (check `.gitignore`) — enforced by `Secret Scan` CI check
-- [ ] **GIT7** — Large data files / model binaries are **never** committed (50 MB limit) — enforced by `Large File Scan` CI check
+- [x] **GIT6** — `.env` is **never** committed (check `.gitignore`) — enforced by `Secret Scan` CI check
+- [x] **GIT7** — Large data files / model binaries are **never** committed (50 MB limit) — enforced by `Large File Scan` CI check
 
 ### Project Novelty (choose one)
 
@@ -148,13 +148,13 @@ Run through this before final submission:
 
 | Category | Done | Total | % |
 |----------|------|-------|---|
-| Modeling | 0 | 7 | 0% |
+| Modeling | 2 | 7 | 29% |
 | Experimentation | 0 | 6 | 0% |
-| App | 0 | 5 | 0% |
+| App | 2 | 5 | 40% |
 | Written Report | 0 | 17 | 0% |
 | Pitch | 0 | 5 | 0% |
-| Repo / Code Quality | 0 | 18 | 0% |
-| Git Best Practices | 0 | 7 | 0% |
-| **Total** | **0** | **65** | **0%** |
+| Repo / Code Quality | 11 | 18 | 61% |
+| Git Best Practices | 4 | 7 | 57% |
+| **Total** | **19** | **65** | **29%** |
 
 > Last updated: 2026-04-11
