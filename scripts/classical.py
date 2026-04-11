@@ -58,27 +58,18 @@ TOPIC_KEYWORDS: dict[str, str] = {
 }
 
 # ---------------------------------------------------------------------------
-# Flag thresholds — set dynamically by calibrate_flags() from actual data
-# distributions. Defaults below are fallbacks if calibration hasn't run.
+# Flag thresholds — set by calibrate_flags() from actual data distributions.
+# Must be calibrated before flags are evaluated.
 # ---------------------------------------------------------------------------
-_flag_thresholds = {
-    "vague_cutoff": 0.3,
-    "high_value_cutoff": 1_000_000_000,
-    "high_scrutiny_cutoff": 0.7,
-    "trending_cutoff": 0.2,
-}
+_flag_thresholds: dict[str, float] = {}
 
 
 def calibrate_flags(df: pd.DataFrame) -> None:
-    """Set flag thresholds from data percentiles instead of hardcoded values."""
-    if "transparency_score" in df.columns and df["transparency_score"].notna().sum() > 0:
-        _flag_thresholds["vague_cutoff"] = float(df["transparency_score"].quantile(0.25))
-    if "value" in df.columns and df["value"].notna().sum() > 0:
-        _flag_thresholds["high_value_cutoff"] = float(df["value"].quantile(0.95))
-    if "doge_scrutiny_score" in df.columns and df["doge_scrutiny_score"].notna().sum() > 0:
-        _flag_thresholds["high_scrutiny_cutoff"] = float(df["doge_scrutiny_score"].quantile(0.90))
-    if "gdelt_popularity_score" in df.columns and df["gdelt_popularity_score"].notna().sum() > 0:
-        _flag_thresholds["trending_cutoff"] = float(df["gdelt_popularity_score"].quantile(0.75))
+    """Set flag thresholds from data percentiles. Must be called before recommend()."""
+    _flag_thresholds["vague_cutoff"] = float(df["transparency_score"].quantile(0.25))
+    _flag_thresholds["high_value_cutoff"] = float(df["value"].quantile(0.95))
+    _flag_thresholds["high_scrutiny_cutoff"] = float(df["doge_scrutiny_score"].quantile(0.90))
+    _flag_thresholds["trending_cutoff"] = float(df["gdelt_popularity_score"].quantile(0.75))
     logger.info("Calibrated flag thresholds: %s", _flag_thresholds)
 
 
