@@ -18,9 +18,9 @@ jobs:
       - name: Build site
         run: |
           mkdir -p _site
-          cp -r docs/* _site/
+          cp -r app/* _site/
           python3 scripts/generate_checklist.py
-          cp -r docs/checklist _site/checklist
+          cp -r app/checklist _site/checklist
 
       - name: Write job summary
         run: |

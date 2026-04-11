@@ -1,5 +1,5 @@
 # AI-assisted (Claude Code, claude.ai) — https://claude.ai
-"""Parse REQUIREMENTS_CHECKLIST.md and write docs/checklist/index.html."""
+"""Parse REQUIREMENTS_CHECKLIST.md and write app/checklist/index.html."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 SOURCE = ROOT / ".github" / "REQUIREMENTS_CHECKLIST.md"
-OUT = ROOT / "docs" / "checklist" / "index.html"
+OUT = ROOT / "app" / "checklist" / "index.html"
 
 
 def parse_checklist(text: str) -> list[dict]:

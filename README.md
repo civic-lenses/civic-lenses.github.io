@@ -130,7 +130,7 @@ Evaluation metrics: `precision@k`, `topic_coverage`, `mean_relevance`, `mean_fin
 │   ├── processed/             <- unified_contracts.csv
 │   └── outputs/               <- Model outputs
 ├── models/                    <- Trained models
-├── docs/                      <- Frontend (index.html, main.js, styles.css)
+├── app/                       <- Frontend (index.html, main.js, styles.css)
 ├── .env.example               <- Required environment variables
 └── requirements.txt
 ```
