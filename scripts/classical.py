@@ -54,7 +54,7 @@ TOPIC_KEYWORDS: dict[str, str] = {
     "finance":                "finance treasury tax revenue budget fiscal economic debt",
     "government_efficiency":  "efficiency management consulting administrative reform modernization audit",
     "general_spending":       "government federal spending contract services program support procurement",
-    "doge_scrutiny":          "waste fraud abuse oversight accountability transparency elimination reduction",
+    "doge_scrutiny":          "doge department government efficiency waste fraud abuse oversight accountability transparency elimination reduction",
 }
 
 # ---------------------------------------------------------------------------
