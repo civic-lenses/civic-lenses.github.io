@@ -1,3 +1,4 @@
+# AI-assisted (Claude Code, claude.ai) — https://claude.ai
 """
 Classical ML Model: TF-IDF + Cosine Similarity Recommender
 ===========================================================
