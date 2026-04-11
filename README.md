@@ -1,7 +1,6 @@
 # Civic Lenses
 
 [![Deploy Site](https://github.com/civic-lenses/civic-lenses.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/civic-lenses/civic-lenses.github.io/actions/workflows/deploy.yml)
-[![PR Checks](https://github.com/civic-lenses/civic-lenses.github.io/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/civic-lenses/civic-lenses.github.io/actions/workflows/pr-checks.yml)
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/civic-lenses/civic-lenses.github.io?quickstart=1)
 
 AIPI 540 project — a personalized federal spending recommender that helps citizens track government contracts, grants, and leases using data from GDELT, DOGE.gov, USAspending.gov, and SAM.gov.
