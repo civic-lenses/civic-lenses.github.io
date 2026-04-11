@@ -31,9 +31,6 @@ models/*
 .ipynb_checkpoints/
 notebooks/.ipynb_checkpoints/
 
-# Generated at runtime by audit workflow
-.github/checklist-evidence.json
-
 # IDE
 .vscode/
 .idea/

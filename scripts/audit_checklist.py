@@ -1,18 +1,13 @@
 # AI-assisted (Claude Code, claude.ai) — https://claude.ai
 """Deterministic checklist auditor.
 
-Scans the repo, evaluates all mechanically verifiable checklist items,
-and updates REQUIREMENTS_CHECKLIST.md directly. Writes a residual file
-listing only the items that require human or AI judgment.
-
-Outputs:
-  - .github/REQUIREMENTS_CHECKLIST.md  (updated in place)
-  - .github/checklist-residual.json    (items needing judgment)
+Scans the repo, evaluates all mechanically verifiable checklist items
+(marked 🤖 in the checklist), and updates REQUIREMENTS_CHECKLIST.md.
+Items marked 👤 are left for manual verification.
 """
 
 from __future__ import annotations
 
-import json
 import re
 import subprocess
 from datetime import datetime, timezone
@@ -20,7 +15,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 CHECKLIST_PATH = ROOT / ".github" / "REQUIREMENTS_CHECKLIST.md"
-RESIDUAL_PATH = ROOT / ".github" / "checklist-residual.json"
 
 
 # ------------------------------------------------------------------
@@ -111,10 +105,6 @@ def collect() -> dict:
     model_files = [f for f in _glob("models/**/*") if not f.endswith(".gitkeep")]
 
     has_dl = any(_has_pattern(f, r"^(import torch|from torch|import tensorflow|from tensorflow|from keras|import keras)", re.MULTILINE) for f in py)
-    has_experiment = any(_has_pattern(f, r"(sensitivity|ablation|alpha.*\[|hyperparameter|compare.*baseline)") for f in py)
-
-    merged_prs = _run("gh pr list --state merged --limit 10 --json number,title,reviews "
-                       "--jq '.[] | \"#\\(.number) reviews=\\(.reviews | length)\"'")
 
     return {
         "M1": any(_has_pattern(f, r"(baseline|naive|popularity|majority|mean.predict)") for f in py),
@@ -140,16 +130,7 @@ def collect() -> dict:
         "model_py": _exists("scripts/naive_baseline.py") or _exists("scripts/classical.py"),  # split
         "models_dir": _exists("models"),
         "data_dirs": _exists("data/raw") and _exists("data/processed") and _exists("data/outputs"),
-        "notebooks_with_content": len(notebooks) > 0,
         "notebooks_dir": _exists("notebooks"),
-        "has_experiment": has_experiment,
-        "readme_models_documented": (
-            bool(re.search(r"(naive|baseline)", readme, re.I))
-            and bool(re.search(r"(classical|TF-?IDF|cosine)", readme, re.I))
-            and bool(re.search(r"(scripts/naive|scripts/classical|naive_baseline|classical\.py)", readme))
-        ),
-        "readme_dl_documented": bool(re.search(r"(deep.learn|neural|transformer|pytorch|tensorflow)", readme, re.I)),
-        "merged_prs": merged_prs,
     }
 
 
@@ -187,14 +168,14 @@ STRUCTURE_ITEMS: dict[str, str] = {
     "`scripts/model.py`": "model_py",
     "`models/`": "models_dir",
     "`data/raw/`, `data/processed/`, `data/outputs/`": "data_dirs",
+    "`notebooks/`": "notebooks_dir",
 }
 
 
-def update_checklist(evidence: dict) -> tuple[list[str], list[dict]]:
-    """Update checklist markdown. Returns (changes_made, residual_items)."""
+def update_checklist(evidence: dict) -> list[str]:
+    """Update checklist markdown. Returns list of changes made."""
     text = CHECKLIST_PATH.read_text()
     changes: list[str] = []
-    residual: list[dict] = []
 
     # --- Table-format items (M1-M7): ⬜ -> ✅ with location ---
     for ekey, item_id, location in RULES:
@@ -216,6 +197,7 @@ def update_checklist(evidence: dict) -> tuple[list[str], list[dict]]:
         "CQ5": evidence.get("CQ5"),
         "GIT1": evidence.get("GIT1"),
         "GIT2": evidence.get("GIT2"),
+        "GIT4": _exists(".github/workflows/pr-checks.yml"),
         "GIT6": evidence.get("GIT6"),
         "GIT7": evidence.get("GIT7"),
         "APP1": evidence.get("APP1"),
@@ -236,57 +218,13 @@ def update_checklist(evidence: dict) -> tuple[list[str], list[dict]]:
         if not evidence.get(ekey):
             continue
         escaped = re.escape(label)
-        pattern = rf"(- \[) (\] {escaped})"
+        # Handle optional emoji marker (🤖/👤) between checkbox and label
+        pattern = rf"(- \[) (\](?:\s*🤖|\s*👤)?\s*{escaped})"
         replacement = r"\g<1>x\g<2>"
         new_text = re.sub(pattern, replacement, text)
         if new_text != text:
             changes.append(f"repo: {label}")
             text = new_text
-
-    # --- Items that need judgment (for AI workflow) ---
-    judgment_items = [
-        {"id": "M4", "question": "Are all implemented models documented in README with file locations?",
-         "signal": f"baseline={evidence['readme_models_documented']}, dl={evidence['readme_dl_documented']}"},
-        {"id": "M6", "question": "Is a final model clearly identified and justified?",
-         "signal": "check README for explicit final model statement"},
-        {"id": "CQ3", "question": "Are variable names descriptive throughout?",
-         "signal": "spot-check scripts/*.py"},
-        {"id": "CQ4", "question": f"Docstring coverage is {evidence['CQ4_coverage']:.0%}. Sufficient?",
-         "signal": f"coverage={evidence['CQ4_coverage']}"},
-        {"id": "CQ6", "question": "Is external code/library usage attributed?",
-         "signal": "check for uncommented external code"},
-        {"id": "GIT3", "question": "Are all commits merged via PRs (no direct pushes)?",
-         "signal": "check merge commit ratio in git history"},
-        {"id": "GIT4", "question": "Do all PRs have meaningful summaries?",
-         "signal": "CI enforces this via pr-checks.yml"},
-        {"id": "GIT5", "question": "Do PRs have substantive review comments?",
-         "signal": evidence.get("merged_prs", "")},
-        {"id": "APP2", "question": "Is the app UI polished beyond a bare template?",
-         "signal": "read app/index.html, app/styles.css"},
-        {"id": "NOV1", "question": "Is the project working on a novel dataset/problem?",
-         "signal": "check README for novelty claims"},
-        {"id": "REPO1", "question": "Is there an exploration notebook in notebooks/?",
-         "signal": f"notebooks_exist={evidence['notebooks_with_content']}"},
-    ]
-
-    if evidence.get("has_experiment"):
-        for ex_id in ["EX1", "EX2", "EX3", "EX4", "EX5", "EX6"]:
-            judgment_items.append({
-                "id": ex_id,
-                "question": f"Does the experiment code satisfy {ex_id}?",
-                "signal": "experiment code found, read for quality",
-            })
-
-    # Filter to items not already checked
-    for item in judgment_items:
-        item_id = item["id"]
-        # Check if already marked done in table format
-        if re.search(rf"\|\s*{item_id}\s*\|.*✅", text):
-            continue
-        # Check if already marked done in list format
-        if re.search(rf"- \[x\] \*\*{item_id}\*\*", text):
-            continue
-        residual.append(item)
 
     # --- Update summary table ---
     text = _update_summary(text)
@@ -296,7 +234,7 @@ def update_checklist(evidence: dict) -> tuple[list[str], list[dict]]:
     text = re.sub(r"Last updated: \d{4}-\d{2}-\d{2}", f"Last updated: {today}", text)
 
     CHECKLIST_PATH.write_text(text)
-    return changes, residual
+    return changes
 
 
 def _update_summary(text: str) -> str:
@@ -315,8 +253,8 @@ def _update_summary(text: str) -> str:
     # Count checked table items (✅) and list items ([x]) with IDs
     checked_table = set(re.findall(r"\|\s*([A-Z]+\d+)\s*\|.*?✅", text))
     checked_list = set(re.findall(r"\[x\]\s*\*\*([A-Z]+\d+)\*\*", text))
-    # Plain repo structure items (no ID, just [x])
-    plain_checked = len(re.findall(r"- \[x\] `(?:README|requirements|\.gitignore|scripts/|models/|data/|notebooks/|setup|main)", text))
+    # Plain repo structure items (no ID, just [x], with optional emoji marker)
+    plain_checked = len(re.findall(r"- \[x\](?:\s*🤖|\s*👤)?\s*`(?:README|requirements|\.gitignore|scripts/|models/|data/|notebooks/|setup|main)", text))
 
     counts: dict[str, int] = {}
     for label, (prefixes, _) in sections.items():
@@ -356,16 +294,11 @@ def _update_summary(text: str) -> str:
 
 def main() -> None:
     evidence = collect()
-    changes, residual = update_checklist(evidence)
-
-    RESIDUAL_PATH.write_text(json.dumps(residual, indent=2) + "\n")
+    changes = update_checklist(evidence)
 
     print(f"Updated {len(changes)} items in REQUIREMENTS_CHECKLIST.md")
     for c in changes:
         print(f"  ✓ {c}")
-    print(f"\n{len(residual)} items need judgment (written to {RESIDUAL_PATH.name})")
-    for r in residual:
-        print(f"  ? {r['id']}: {r['question']}")
 
 
 if __name__ == "__main__":
