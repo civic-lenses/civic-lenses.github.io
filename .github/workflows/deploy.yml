@@ -1,0 +1,51 @@
+# AI-assisted (Claude Code, claude.ai) — https://claude.ai
+name: Deploy Site
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build site
+        run: |
+          mkdir -p _site
+          cp -r app/* _site/
+          python3 scripts/generate_checklist.py _site/checklist/index.html
+
+      - name: Write job summary
+        run: |
+          echo "## Requirements Checklist" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat .github/REQUIREMENTS_CHECKLIST.md >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "[View live checklist](https://civic-lenses.github.io/checklist/)" >> $GITHUB_STEP_SUMMARY
+
+      - name: Deploy to gh-pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout --orphan gh-pages-tmp
+          git rm -rf .
+          cp -r _site/* .
+          git add -A
+          git commit -m "deploy: regenerate site and checklist"
+          git push --force origin HEAD:gh-pages
