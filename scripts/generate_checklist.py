@@ -5,12 +5,13 @@ from __future__ import annotations
 
 import html
 import re
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
 SOURCE = ROOT / ".github" / "REQUIREMENTS_CHECKLIST.md"
-OUT = ROOT / "app" / "checklist" / "index.html"
+DEFAULT_OUT = ROOT / "app" / "checklist" / "index.html"
 
 
 def parse_checklist(text: str) -> list[dict]:
@@ -207,14 +208,18 @@ def render_html(sections: list[dict], generated_at: str) -> str:
 
 
 def main() -> None:
-    """Read REQUIREMENTS_CHECKLIST.md and write the rendered HTML to docs/checklist/index.html."""
+    """Read REQUIREMENTS_CHECKLIST.md and write the rendered HTML.
+
+    Usage: python generate_checklist.py [output_path]
+    """
+    out = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_OUT
     text = SOURCE.read_text(encoding="utf-8")
     sections = parse_checklist(text)
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     html = render_html(sections, generated_at)
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(html, encoding="utf-8")
-    print(f"Written → {OUT}")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(html, encoding="utf-8")
+    print(f"Written → {out}")
 
 
 if __name__ == "__main__":
