@@ -21,30 +21,18 @@ by incorporating user location, topic preferences, and behaviour.
 from __future__ import annotations
 
 import logging
+import math
 import os
+import sys
 from datetime import datetime, timezone
 
 import pandas as pd
 
-logger = logging.getLogger(__name__)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-# ---------------------------------------------------------------------------
-# 1. Query → topic category mapping
-#    GDELT queries map to the same topic labels used in user onboarding.
-#    Extend this dict as you add more GDELT queries.
-# ---------------------------------------------------------------------------
-QUERY_TO_TOPIC: dict[str, str] = {
-    "government spending":    "general_spending",
-    "federal contracts":      "federal_contracts",
-    "government efficiency":  "government_efficiency",
-    "DOGE savings":           "doge_scrutiny",
-    "healthcare spending":    "healthcare",
-    "defense contracts":      "defense",
-    "education funding":      "education",
-    "infrastructure":         "infrastructure",
-    "foreign aid":            "foreign_aid",
-    "scientific research":    "research",
-}
+from config import RAW_DATA_DIR, PROCESSED_DATA_DIR, QUERY_TO_TOPIC
+
+logger = logging.getLogger(__name__)
 
 # NAICS prefix → topic category
 # Used to map contract NAICS codes to the same topic labels.
@@ -239,7 +227,7 @@ class GDELTPopularityScorer:
             (now - df["parsed_date"]).dt.total_seconds() / 3600
         ).clip(lower=0)
         df["recency_weight"] = (-self.decay_rate * df["hours_ago"]).apply(
-            lambda x: 2.718281828 ** x  # exp without importing math
+            lambda x: math.exp(x)
         )
 
         # Aggregate per topic
@@ -321,8 +309,8 @@ if __name__ == "__main__":
         format="%(asctime)s %(levelname)s: %(message)s",
     )
 
-    GDELT_PATH     = os.path.join("data", "raw",       "gdelt_articles.csv")
-    CONTRACTS_PATH = os.path.join("data", "processed", "unified_contracts.csv")
+    GDELT_PATH     = os.path.join(RAW_DATA_DIR, "gdelt_articles.csv")
+    CONTRACTS_PATH = os.path.join(PROCESSED_DATA_DIR, "unified_contracts.csv")
 
     # --- Fit scorer on real GDELT data ---
     scorer = GDELTPopularityScorer(

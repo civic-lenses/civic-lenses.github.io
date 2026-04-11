@@ -24,15 +24,18 @@ import logging
 import os
 import sys
 from typing import Optional
+
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
+from config import PROCESSED_DATA_DIR
+
 logger = logging.getLogger(__name__)
 
-PROCESSED_PATH = os.path.join("data", "processed", "unified_contracts.csv")
+PROCESSED_PATH = os.path.join(PROCESSED_DATA_DIR, "unified_contracts.csv")
 
 # ---------------------------------------------------------------------------
 # Topic → seed keywords
@@ -325,7 +328,7 @@ def _compute_flags(row: pd.Series) -> list[str]:
 def evaluate(
     results: pd.DataFrame,
     relevant_topics: list[str],
-    k_values: list[int] = [5, 10, 20],
+    k_values: list[int] | None = None,
 ) -> pd.DataFrame:
     """
     Evaluate recommendation quality at multiple k values.
@@ -336,6 +339,8 @@ def evaluate(
         mean_relevance  — average cosine similarity score
         mean_final      — average final_score
     """
+    if k_values is None:
+        k_values = [5, 10, 20]
     rows = []
     for k in k_values:
         top_k = results.head(k)
