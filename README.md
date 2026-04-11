@@ -8,21 +8,9 @@ A personalized federal spending recommender that helps citizens track government
 
 ---
 
-## Quickstart
+## Problem
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/civic-lenses/civic-lenses.github.io?quickstart=1)
-
-```bash
-make venv                      # create .venv + install dependencies
-source .venv/bin/activate
-cp .env.example .env           # add your SAM.gov API key
-make data                      # fetch raw data from all sources
-make features                  # preprocess → data/processed/
-make train                     # train all three models
-make run                       # launch the app
-```
-
-Run `make` to see all available commands.
+Federal spending data is scattered across multiple government systems (SAM.gov, USAspending.gov, DOGE.gov) with no unified way for citizens to discover what matters to them. News coverage adds signal but isn't connected to the underlying contract data. Civic Lenses joins these sources, scores each contract on transparency, public interest, and news attention, and recommends the most relevant items based on a user's topic preferences.
 
 ## Data Sources
 
@@ -33,16 +21,7 @@ Run `make` to see all available commands.
 | [USAspending.gov](https://api.usaspending.gov) | None | Federal award and agency spending |
 | [SAM.gov](https://api.sam.gov) | API key (free) | Contract opportunities and entity registrations |
 
-## Pipeline
-
-```bash
-python scripts/make_dataset.py          # 1. Fetch raw data → data/raw/
-python scripts/preprocess.py            # 2. Merge + feature engineering → data/processed/
-python scripts/naive_baseline.py        # 3a. Naive baseline (GDELT popularity)
-python scripts/classical.py             # 3b. Classical ML (TF-IDF + cosine similarity)
-```
-
-### Models
+## Models
 
 | Model | Approach | Personalized? |
 |-------|----------|---------------|
@@ -75,6 +54,22 @@ python scripts/classical.py             # 3b. Classical ML (TF-IDF + cosine simi
 ├── .env.example               required environment variables
 └── requirements.txt
 ```
+
+## Quickstart
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/civic-lenses/civic-lenses.github.io?quickstart=1)
+
+```bash
+make venv                      # create .venv + install dependencies
+source .venv/bin/activate
+cp .env.example .env           # add your SAM.gov API key
+make data                      # fetch raw data from all sources
+make features                  # preprocess → data/processed/
+make train                     # train all three models
+make run                       # launch the app
+```
+
+Run `make` to see all available commands.
 
 ## Team
 
