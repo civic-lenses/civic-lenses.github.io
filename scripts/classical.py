@@ -22,11 +22,8 @@ from __future__ import annotations
 
 import logging
 import os
-import re
 import sys
 from typing import Optional
-
-import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity

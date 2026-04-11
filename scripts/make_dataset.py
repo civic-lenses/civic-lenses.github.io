@@ -29,8 +29,7 @@ def _save(df: pd.DataFrame, name: str) -> None:
 
 
 def fetch_gdelt(queries: list[str] | None = None, days: int = 30) -> None:
-    """Pull GDELT news articles over a rolling multi-day window.s
- 
+    """Pull GDELT news articles over a rolling multi-day window.
     Args:
         queries: Search terms to query (defaults to core gov-spending topics).
         days:    Lookback window in days (default 30).
