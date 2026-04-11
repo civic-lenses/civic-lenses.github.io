@@ -24,44 +24,64 @@ import logging
 import os
 import sys
 from typing import Optional
+
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
+from config import PROCESSED_DATA_DIR
+
 logger = logging.getLogger(__name__)
 
-PROCESSED_PATH = os.path.join("data", "processed", "unified_contracts.csv")
+PROCESSED_PATH = os.path.join(PROCESSED_DATA_DIR, "unified_contracts.csv")
 
 # ---------------------------------------------------------------------------
 # Topic → seed keywords
 # Used to build the user query string from topic selections
 # ---------------------------------------------------------------------------
+# Seed keywords for building TF-IDF user queries from topic selections.
+# Each entry should contain terms likely to appear in federal contract
+# descriptions or agency names from SAM.gov, DOGE.gov, and USAspending.
+# Expanded per PR #1 review to reduce coverage gaps.
 TOPIC_KEYWORDS: dict[str, str] = {
-    "healthcare":             "healthcare health medical hospital patient clinical disease nursing",
-    "education":              "education school training learning curriculum workforce student",
-    "defense":                "defense military army navy air force security weapon combat",
-    "infrastructure":         "infrastructure road bridge construction transportation highway",
-    "foreign_aid":            "foreign aid international development overseas assistance usaid",
-    "research":               "research science technology innovation laboratory grant study",
-    "energy":                 "energy oil gas renewable solar wind nuclear power grid",
-    "agriculture":            "agriculture farming food crop livestock rural nutrition",
-    "finance":                "finance treasury tax revenue budget fiscal economic",
-    "government_efficiency":  "efficiency management consulting administrative reform modernization",
-    "general_spending":       "government federal spending contract services program support",
-    "doge_scrutiny":          "waste fraud abuse oversight accountability transparency doge",
+    "healthcare":             "healthcare health medical hospital patient clinical disease nursing medicaid medicare veterans",
+    "education":              "education school training learning curriculum workforce student university college",
+    "defense":                "defense military army navy air force security weapon combat veteran",
+    "infrastructure":         "infrastructure road bridge construction transportation highway transit water broadband",
+    "foreign_aid":            "foreign aid international development overseas assistance humanitarian",
+    "research":               "research science technology innovation laboratory grant study clinical trial",
+    "energy":                 "energy oil gas renewable solar wind nuclear power grid pipeline",
+    "agriculture":            "agriculture farming food crop livestock rural nutrition subsidy",
+    "finance":                "finance treasury tax revenue budget fiscal economic debt",
+    "government_efficiency":  "efficiency management consulting administrative reform modernization audit",
+    "general_spending":       "government federal spending contract services program support procurement",
+    "doge_scrutiny":          "doge department government efficiency waste fraud abuse oversight accountability transparency elimination reduction",
 }
 
 # ---------------------------------------------------------------------------
-# Flag thresholds
+# Flag thresholds — set by calibrate_flags() from actual data distributions.
+# Must be calibrated before flags are evaluated.
 # ---------------------------------------------------------------------------
+_flag_thresholds: dict[str, float] = {}
+
+
+def calibrate_flags(df: pd.DataFrame) -> None:
+    """Set flag thresholds from data percentiles. Must be called before recommend()."""
+    _flag_thresholds["vague_cutoff"] = float(df["transparency_score"].quantile(0.25))
+    _flag_thresholds["high_value_cutoff"] = float(df["value"].quantile(0.95))
+    _flag_thresholds["high_scrutiny_cutoff"] = float(df["doge_scrutiny_score"].quantile(0.90))
+    _flag_thresholds["trending_cutoff"] = float(df["gdelt_popularity_score"].quantile(0.75))
+    logger.info("Calibrated flag thresholds: %s", _flag_thresholds)
+
+
 FLAG_THRESHOLDS = {
     "doge_flag":          lambda r: r.get("doge_flag", 0) == 1,
-    "vague_description":  lambda r: r.get("transparency_score", 1) < 0.3,
-    "high_value":         lambda r: r.get("value", 0) > 1_000_000_000,
-    "high_scrutiny":      lambda r: r.get("doge_scrutiny_score", 0) > 0.7,
-    "trending":           lambda r: r.get("gdelt_popularity_score", 0) > 0.2,
+    "vague_description":  lambda r: r.get("transparency_score", 1) < _flag_thresholds["vague_cutoff"],
+    "high_value":         lambda r: r.get("value", 0) > _flag_thresholds["high_value_cutoff"],
+    "high_scrutiny":      lambda r: r.get("doge_flag", 0) == 1 and r.get("doge_scrutiny_score", 0) > _flag_thresholds["high_scrutiny_cutoff"],
+    "trending":           lambda r: r.get("gdelt_popularity_score", 0) > _flag_thresholds["trending_cutoff"],
 }
 
 
@@ -113,6 +133,8 @@ class TFIDFRecommender:
             contracts: unified_contracts DataFrame — needs 'description' column
         """
         self._contracts = contracts.copy().reset_index(drop=True)
+
+        calibrate_flags(self._contracts)
 
         # Build text corpus — combine description + agency for richer signal
         corpus = (
@@ -306,7 +328,7 @@ def _compute_flags(row: pd.Series) -> list[str]:
 def evaluate(
     results: pd.DataFrame,
     relevant_topics: list[str],
-    k_values: list[int] = [5, 10, 20],
+    k_values: list[int] | None = None,
 ) -> pd.DataFrame:
     """
     Evaluate recommendation quality at multiple k values.
@@ -317,6 +339,8 @@ def evaluate(
         mean_relevance  — average cosine similarity score
         mean_final      — average final_score
     """
+    if k_values is None:
+        k_values = [5, 10, 20]
     rows = []
     for k in k_values:
         top_k = results.head(k)

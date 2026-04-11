@@ -36,3 +36,21 @@ DOGE_BASE_URL = "https://api.doge.gov"
 RAW_DATA_DIR = os.path.join(os.path.dirname(__file__), "data", "raw")
 PROCESSED_DATA_DIR = os.path.join(os.path.dirname(__file__), "data", "processed")
 OUTPUT_DATA_DIR = os.path.join(os.path.dirname(__file__), "data", "outputs")
+
+# ---------------------------------------------------------------------------
+# GDELT query → topic category mapping (single source of truth)
+# ---------------------------------------------------------------------------
+QUERY_TO_TOPIC: dict[str, str] = {
+    "government spending":   "general_spending",
+    "federal contracts":     "federal_contracts",
+    "government efficiency": "government_efficiency",
+    "DOGE savings":          "doge_scrutiny",
+    "federal budget cuts":   "government_efficiency",
+    "government waste":      "government_efficiency",
+    "healthcare spending":   "healthcare",
+    "defense contracts":     "defense",
+    "education funding":     "education",
+    "infrastructure":        "infrastructure",
+    "foreign aid":           "foreign_aid",
+    "scientific research":   "research",
+}
