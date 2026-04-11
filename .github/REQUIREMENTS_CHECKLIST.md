@@ -132,15 +132,15 @@ Format: NeurIPS/ICML-style paper, white paper, or technical report.
 
 Run through this before final submission:
 
-- [ ] `python setup.py` runs end-to-end without errors
-- [ ] `python scripts/build_features.py` produces processed data
-- [ ] `python scripts/model.py` trains all three models and writes artifacts to `models/`
-- [ ] App launches and is reachable in browser
-- [ ] Live deployment URL is working and accessible without login
-- [ ] README deployment link updated to actual URL
-- [ ] Written report submitted in the required format
-- [ ] Pitch deck/slides prepared
-- [ ] Repo is public (or access granted to grader)
+- [ ] FS1: `python setup.py` runs end-to-end without errors
+- [ ] FS2: `python scripts/build_features.py` produces processed data
+- [ ] FS3: `python scripts/model.py` trains all three models and writes artifacts to `models/`
+- [ ] FS4: App launches and is reachable in browser
+- [ ] FS5: Live deployment URL is working and accessible without login
+- [ ] FS6: README deployment link updated to actual URL
+- [ ] FS7: Written report submitted in the required format
+- [ ] FS8: Pitch deck/slides prepared
+- [ ] FS9: Repo is public (or access granted to grader)
 
 ---
 

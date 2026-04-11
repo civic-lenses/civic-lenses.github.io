@@ -36,8 +36,7 @@ jobs:
           fetch-depth: 0
       - name: Detect committed .env or credential files (GIT6)
         run: |
-          git fetch origin ${{ github.base_ref }}
-          ADDED=$(git diff --name-only --diff-filter=A origin/${{ github.base_ref }}...HEAD || true)
+          ADDED=$(git diff --name-only --diff-filter=A ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} || true)
           FLAGGED=""
           for f in $ADDED; do
             case "$f" in
@@ -59,9 +58,8 @@ jobs:
           fetch-depth: 0
       - name: Reject files larger than 50 MB (GIT7)
         run: |
-          git fetch origin ${{ github.base_ref }}
           LIMIT=52428800  # 50 MB in bytes
-          FILES=$(git diff --name-only --diff-filter=AM origin/${{ github.base_ref }}...HEAD || true)
+          FILES=$(git diff --name-only --diff-filter=AM ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} || true)
           for f in $FILES; do
             [ -f "$f" ] || continue
             SIZE=$(wc -c < "$f")

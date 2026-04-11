@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   auto-check:
@@ -30,11 +31,14 @@ jobs:
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "[View live checklist](https://civic-lenses.github.io/checklist/)" >> $GITHUB_STEP_SUMMARY
 
-      - name: Commit if checklist changed
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          git add docs/checklist/index.html
-          git diff --staged --quiet || git commit -m "chore: regenerate live checklist"
-          git push origin main
+      - name: Create pull request if checklist changed
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "chore: regenerate live checklist"
+          branch: "automation/checklist-regeneration"
+          delete-branch: true
+          title: "chore: regenerate live checklist"
+          body: |
+            Automated checklist regeneration.
+          add-paths: |
+            docs/checklist/index.html

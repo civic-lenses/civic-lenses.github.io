@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import html
 import re
 from datetime import datetime, timezone
 from pathlib import Path
@@ -39,12 +40,21 @@ def parse_checklist(text: str) -> list[dict]:
             )
             continue
 
-        # List item:  - [x] **ID** — description
+        # List item with explicit ID:  - [x] **ID** — description
         m = re.match(r"^-\s+\[(x| )\]\s+\*\*([A-Z]+\d+)\*\*\s*[—–-]?\s*(.+)", line)
         if m:
             checked, item_id, label = m.groups()
             current["items"].append(
                 {"id": item_id.strip(), "label": _clean(label), "done": checked == "x"}
+            )
+            continue
+
+        # Plain checklist bullet without an explicit ID: - [x] description
+        m = re.match(r"^-\s+\[(x| )\]\s+(.+)", line)
+        if m:
+            checked, label = m.groups()
+            current["items"].append(
+                {"id": "", "label": _clean(label), "done": checked == "x"}
             )
 
     return [s for s in sections if s["items"]]
@@ -72,23 +82,26 @@ def render_html(sections: list[dict], generated_at: str) -> str:
     for sec in sections:
         done, total = _progress(sec["items"])
         pct = round(100 * done / total) if total else 0
+        safe_title = html.escape(sec["title"])
 
         rows = ""
         for item in sec["items"]:
             status_cls = "done" if item["done"] else "open"
             glyph = "✓" if item["done"] else "○"
+            safe_item_id = html.escape(item["id"])
+            safe_item_label = html.escape(item["label"])
             rows += (
                 f'<tr class="{status_cls}">'
                 f'<td class="item-glyph">{glyph}</td>'
-                f'<td class="item-id">{item["id"]}</td>'
-                f'<td class="item-label">{item["label"]}</td>'
+                f'<td class="item-id">{safe_item_id}</td>'
+                f'<td class="item-label">{safe_item_label}</td>'
                 f"</tr>\n"
             )
 
         section_html += f"""
     <section class="checklist-section">
       <div class="section-header">
-        <h2>{sec['title']}</h2>
+        <h2>{safe_title}</h2>
         <span class="section-count">{done}/{total}</span>
       </div>
       <div class="progress-bar"><div class="progress-fill" style="width:{pct}%"></div></div>
@@ -195,12 +208,12 @@ def render_html(sections: list[dict], generated_at: str) -> str:
 
 def main() -> None:
     """Read REQUIREMENTS_CHECKLIST.md and write the rendered HTML to docs/checklist/index.html."""
-    text = SOURCE.read_text()
+    text = SOURCE.read_text(encoding="utf-8")
     sections = parse_checklist(text)
     generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     html = render_html(sections, generated_at)
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(html)
+    OUT.write_text(html, encoding="utf-8")
     print(f"Written → {OUT}")
 
 
