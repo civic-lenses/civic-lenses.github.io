@@ -1,5 +1,5 @@
 # AI-assisted (Claude Code, claude.ai) — https://claude.ai
-name: Auto-check
+name: Deploy Site
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  auto-check:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
