@@ -1,3 +1,4 @@
+# AI-assisted (Claude Code, claude.ai) — https://claude.ai
 """
 Naive Baseline: GDELT Popularity Recommender
 =============================================
