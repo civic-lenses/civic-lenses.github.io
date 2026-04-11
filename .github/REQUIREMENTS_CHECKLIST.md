@@ -113,13 +113,13 @@ Format: NeurIPS/ICML-style paper, white paper, or technical report.
 
 ### Git Best Practices ⚠️
 
-- [ ] **GIT1** — Feature branches in use
-- [ ] **GIT2** — PR template in `.github/PULL_REQUEST_TEMPLATE/`
-- [ ] **GIT3** — All code merged via PRs (no direct commits to `main`)
-- [ ] **GIT4** — Every PR has a meaningful Summary
-- [ ] **GIT5** — Every PR reviewed with **substantive comments**
-- [ ] **GIT6** — `.env` is **never** committed (check `.gitignore`)
-- [ ] **GIT7** — Large data files / model binaries are **never** committed (50 MB limit)
+- [x] **GIT1** — Feature branches in use
+- [x] **GIT2** — PR template in `.github/PULL_REQUEST_TEMPLATE/`
+- [ ] **GIT3** — All code merged via PRs (no direct commits to `main`) — enforced by branch protection
+- [ ] **GIT4** — Every PR has a meaningful Summary — enforced by `PR Summary` CI check
+- [ ] **GIT5** — Every PR reviewed with **substantive comments** — CODEOWNER approval required
+- [ ] **GIT6** — `.env` is **never** committed (check `.gitignore`) — enforced by `Secret Scan` CI check
+- [ ] **GIT7** — Large data files / model binaries are **never** committed (50 MB limit) — enforced by `Large File Scan` CI check
 
 ### Project Novelty (choose one)
 
