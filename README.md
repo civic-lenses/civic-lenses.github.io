@@ -1,7 +1,6 @@
 # AIPI 540 — Civic Lenses
 
 [![Deploy Site](https://github.com/civic-lenses/civic-lenses.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/civic-lenses/civic-lenses.github.io/actions/workflows/deploy.yml)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/civic-lenses/civic-lenses.github.io?quickstart=1)
 
 A personalized federal spending recommender that helps citizens track government contracts, grants, and leases using data from GDELT, DOGE.gov, USAspending.gov, and SAM.gov.
 
@@ -9,13 +8,21 @@ A personalized federal spending recommender that helps citizens track government
 
 ---
 
-## Setup
+## Quickstart
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/civic-lenses/civic-lenses.github.io?quickstart=1)
 
 ```bash
-uv venv && source .venv/bin/activate
-uv pip install -r requirements.txt
-cp .env.example .env   # add your SAM.gov API key
+make venv                      # create .venv + install dependencies
+source .venv/bin/activate
+cp .env.example .env           # add your SAM.gov API key
+make data                      # fetch raw data from all sources
+make features                  # preprocess → data/processed/
+make train                     # train all three models
+make run                       # launch the app
 ```
+
+Run `make` to see all available commands.
 
 ## Data Sources
 
@@ -46,6 +53,7 @@ python scripts/classical.py             # 3b. Classical ML (TF-IDF + cosine simi
 ## Project Structure
 
 ```
+├── Makefile                   setup, data, train, run commands
 ├── config.py                  API endpoints and path constants
 ├── scripts/
 │   ├── make_dataset.py        fetch all raw data
