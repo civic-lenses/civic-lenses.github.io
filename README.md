@@ -74,6 +74,6 @@ Tracked in [`.github/REQUIREMENTS_CHECKLIST.md`](.github/REQUIREMENTS_CHECKLIST.
 
 ## Team
 
-Diya Mirji · Michael Saju · Jonas Neves
+Diya Mirji · Jonas Neves · Michael Saju
 
 Duke University · AIPI 540 · Spring 2026
