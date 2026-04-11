@@ -1,21 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(curl:*)",
-      "WebFetch(domain:doge.gov)",
-      "Read(//tmp/**)",
-      "Bash(grep -oP '\\\\$[0-9,]+|savings|totalSavings|amount|\"[a-z]+_?[Ss]avings\"')",
-      "Bash(python3 -m json.tool)",
-      "Bash(grep -oP 'concat\\\\\\([^\\)]+\\\\\\)|`[^`]+`|\\\\.json|api\\\\.|/savings|/payments|/spend|/workforce|files\\\\.doge')",
-      "Bash(grep -oP '.{0,80}\\(api\\\\.|files\\\\.doge\\).{0,80}')",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'Total: {d[\\\\\"meta\\\\\"][\\\\\"total_results\\\\\"]} grants'\\)\" echo \"=== Contracts ===\")",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'Total: {d[\\\\\"meta\\\\\"][\\\\\"total_results\\\\\"]} contracts'\\)\" echo \"=== Leases ===\")",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'Total: {d[\\\\\"meta\\\\\"][\\\\\"total_results\\\\\"]} leases'\\)\" echo \"=== Payments ===\")",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'Total: {d[\\\\\"meta\\\\\"][\\\\\"total_results\\\\\"]} payments'\\)\")",
-      "Bash(uv venv:*)",
-      "Bash(.venv/Scripts/activate)",
-      "Bash(uv pip:*)",
-      "Bash(ls:*)"
+      "Bash(gh pr:*)",
+      "Bash(git checkout:*)",
+      "Bash(gh api:*)",
+      "Bash(git add:*)",
+      "Bash(python3 scripts/generate_checklist.py)",
+      "Bash(git commit -m ':*)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

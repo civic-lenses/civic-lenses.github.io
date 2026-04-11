@@ -1,3 +1,4 @@
+# AI-assisted (Claude Code, claude.ai) — https://claude.ai
 """Orchestrator — pull raw data from all four sources and save to data/raw/."""
 
 import argparse
