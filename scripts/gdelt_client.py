@@ -80,10 +80,11 @@ class GDELTClient:
                 "GDELT query '%s' | timespan: %s", query, params["timespan"]
             )
 
-        for attempt in range(5):
+        max_retries = 8
+        for attempt in range(max_retries):
             resp = self.session.get(self.base_url, params=params, timeout=60)
             if resp.status_code == 429:
-                wait = 2 ** attempt * 10  # 10, 20, 40, 80, 160 seconds
+                wait = min(2 ** attempt * 15, 600)  # 15, 30, 60, 120, 240, 480, 600, 600
                 logger.warning("GDELT rate limited, retrying in %ds...", wait)
                 time.sleep(wait)
                 continue
@@ -91,8 +92,8 @@ class GDELTClient:
             break
         else:
             logger.error(
-                "GDELT rate limit not resolved after 5 retries for query='%s'; skipping.",
-                query,
+                "GDELT rate limit not resolved after %d retries for query='%s'; skipping.",
+                max_retries, query,
             )
             return pd.DataFrame()
 
@@ -115,7 +116,7 @@ class GDELTClient:
     def search_multiple_queries(
         self,
         queries: list[str],
-        delay: float = 3.0,
+        delay: float = 10.0,
         days: int = 30,
         **kwargs,
     ) -> pd.DataFrame:
