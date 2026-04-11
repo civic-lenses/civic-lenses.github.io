@@ -1,10 +1,9 @@
 ---
 name: Audit Checklist
 description: |
-  Reads the repo and intelligently evaluates which requirements checklist
-  items are satisfied. Updates REQUIREMENTS_CHECKLIST.md with current
-  status and regenerates the live HTML dashboard. Opens a PR with changes.
-  Human reviews and merges.
+  Evaluates which requirements checklist items are satisfied by combining
+  deterministic evidence (script) with AI judgment (this workflow).
+  Updates REQUIREMENTS_CHECKLIST.md and opens a PR for human review.
 
 strict: false
 
@@ -45,116 +44,105 @@ timeout-minutes: 15
 
 # Audit Checklist
 
-You are an auditor for an AIPI 540 course project called Civic Lenses. Your job is to read the repository and determine which requirements checklist items are currently satisfied, then update the checklist file to reflect reality.
+You evaluate which project requirements are satisfied by reading pre-collected evidence and applying judgment where the evidence is ambiguous.
 
-## Step 1: Read current state
+## Step 0: Check for existing audit PR
 
-Read these files from the repository:
+Before doing any work, check if there is already an open pull request with a branch starting with `audit/checklist-`. If one exists, skip the entire workflow and do nothing. This prevents duplicate PRs from piling up.
 
-1. `.github/REQUIREMENTS_CHECKLIST.md` (the checklist to update)
-2. `README.md` (project documentation)
-3. `config.py` (project configuration)
-4. `requirements.txt` (dependencies)
+## Step 1: Collect evidence and read checklist
 
-List all files in `scripts/`, `models/`, `notebooks/`, `docs/`, `app/`, and `data/` directories.
+First, run the evidence collector script. Execute this shell command:
 
-Read the contents of every `.py` file in `scripts/`.
+```
+python3 scripts/audit_checklist.py
+```
 
-Check recent git history: the last 20 commits on `main`, and all merged PRs.
+This produces `.github/checklist-evidence.json` with deterministic signals: file existence, code patterns, git history, README content.
 
-## Step 2: Evaluate each item
+Then read:
 
-Work through the checklist section by section. For each item, decide: **satisfied**, **not satisfied**, or **cannot determine** (for items that require running code or external access).
+1. `.github/checklist-evidence.json` (the evidence you just generated)
+2. `.github/REQUIREMENTS_CHECKLIST.md` (the checklist to update)
 
-### Modeling (M1-M7)
+Trust the evidence signals. Do not re-check what the script already verified.
 
-- **M1 Naive baseline**: Look for a script that implements a non-personalized baseline model (e.g. popularity ranking, majority class, mean predictor). The model must produce recommendations or predictions without learning from individual user data.
-- **M2 Classical ML model**: Look for a script that implements a non-deep-learning ML model (e.g. TF-IDF, logistic regression, random forest, SVM). Must use learned features, not just heuristics.
-- **M3 Deep learning model**: Look for a script that implements a neural network model (e.g. embeddings, transformer, LSTM, MLP with multiple layers). Must use PyTorch, TensorFlow, or similar.
-- **M4 All three documented in README**: Check if README describes all three models with file locations.
-- **M5 Rationale in report**: Cannot determine (report is external). Leave unchanged.
-- **M6 Final model identified**: Check README or code for a clearly designated final/production model.
-- **M7 Model artifacts**: Check if `models/` contains saved model files, or if code has clear save/load logic that would produce them.
+## Step 2: Apply rules for clear-cut items
 
-### Experimentation (EX1-EX6)
+These items map directly to evidence fields. Mark satisfied if the condition holds. Do not use judgment for these.
 
-Look for experimental code: alpha sensitivity analysis, ablation studies, hyperparameter sweeps, A/B comparisons between models. Check if results are printed, logged, or saved. EX1-EX6 relate to documentation quality that may not be fully determinable from code alone. Mark satisfied only if code clearly implements and reports an experiment.
+| Item | Condition |
+|------|-----------|
+| M1 | `modeling.has_naive_baseline == true` |
+| M2 | `modeling.has_classical_ml == true` |
+| M3 | `modeling.has_deep_learning == true` |
+| M7 | `modeling.has_model_artifacts == true` |
+| CQ1 | `code_quality.all_modularized == true` |
+| CQ2 | `code_quality.all_have_main_guard == true` |
+| CQ5 | `code_quality.all_have_ai_attribution == true` |
+| GIT1 | `git.branches_used` shows multiple branches |
+| GIT2 | `key_files.pr_template == true` |
+| GIT6 | `git.gitignore_has_env == true` AND `git.env_in_history` is empty |
+| GIT7 | `git.gitignore_has_data == true` AND `git.gitignore_has_models == true` |
+| `README.md` | `key_files.readme == true` |
+| `requirements.txt` | `key_files.requirements == true` |
+| `.gitignore` | `key_files.gitignore == true` |
+| `scripts/make_dataset.py` | `key_files.make_dataset == true` |
+| `scripts/build_features.py` | `key_files.preprocess == true` (equivalent file) |
+| `scripts/model.py` | `key_files.naive_baseline == true` OR `key_files.classical == true` (split across files) |
+| `models/` | `dirs_exist.models == true` |
+| `data/raw/`, `data/processed/`, `data/outputs/` | respective `dirs_exist` fields |
+| `notebooks/` | `dirs_exist.notebooks == true` AND `files.notebooks` is non-empty |
+| APP1 | `application.has_frontend_html == true` OR `application.has_streamlit_or_gradio == true` |
 
-### Interactive Application (APP1-APP5)
+## Step 3: Apply judgment for ambiguous items
 
-- **APP1**: Check if `docs/` or `app/` contains frontend code (HTML/JS/CSS) or if there's a Streamlit/Gradio/Flask app.
-- **APP2**: Evaluate if the app has styled UI beyond a bare default template.
-- **APP3-APP5**: Check README for a deployment URL. Cannot verify if the URL is live.
+These items require reading code or interpreting context. Use the evidence as a starting point, then read specific files if needed.
 
-### Written Report (R01-R17)
+- **M4** (all three documented in README): Check `readme.mentions_naive_baseline`, `readme.mentions_classical`, `readme.mentions_deep_learning`, and `readme.has_model_file_locations`. Only mark satisfied if all implemented models are documented with file locations.
+- **M6** (final model identified): Read README for an explicit statement about which model is the production/final model.
+- **CQ3** (descriptive variable names): `code_quality.files` lists each file. If the script found no issues, mark satisfied. If you need to verify, spot-check one or two files.
+- **CQ4** (docstrings): Check `code_quality.docstring_coverage`. Mark satisfied if coverage is above 0.7 (70% of public definitions have docstrings).
+- **CQ6** (external attribution): Skim files for external code usage without attribution.
+- **GIT3** (PRs only): Check if `git.merge_commits` shows that recent history uses merge commits. A single direct commit among many PRs is acceptable.
+- **GIT4** (PR summaries): Check `git.merged_prs`. Mark satisfied if the CI check exists (it does: `pr-checks.yml` enforces this).
+- **GIT5** (substantive reviews): Check `git.merged_prs` for review counts. Mark satisfied only if most merged PRs show `reviews > 0`.
+- **APP2** (polished UX): Only if APP1 is satisfied. Read the HTML/CSS/JS files and judge whether it goes beyond a bare template.
+- **APP5** (deployment URL in README): Check `application.readme_has_url`.
+- **EX1-EX6** (experimentation): Check `modeling.has_experiment_code`. If true, read the experiment code and assess whether it poses a question, has a plan, reports results, and draws conclusions. Mark individual EX items based on what you find.
+- **NOV1/NOV2** (novelty): Read README for novelty claims. A recommender for federal spending with custom scoring is likely novel (NOV1).
+- **`setup.py`**: Check `key_files.setup_py`. If false, check whether `requirements.txt` + README setup instructions serve the same purpose. Mark satisfied with a note if so.
+- **`main.py`**: Check `key_files.main_py`. If false, check whether frontend code or a CLI entry point exists. Mark satisfied with a note if so.
+- **REPO1** (exploration notebook): Only satisfied if `files.notebooks` contains at least one `.ipynb` file.
 
-Cannot determine from code. Leave unchanged unless a report file exists in the repo.
+## Step 4: Items to skip
 
-### In-Class Pitch (P1-P5)
+Leave these unchanged (cannot verify from repo alone):
 
-Cannot determine from code. Leave unchanged.
+- **M5** (rationale in report): requires reading the report
+- **R01-R17** (written report sections): unless a report file is in the repo
+- **P1-P5** (in-class pitch): unless slides are in the repo
+- **FS1-FS9** (pre-submission): requires running code
+- **APP3-APP4** (publicly accessible, live for a week): requires external verification
 
-### Repo Structure
-
-Check each expected file/directory. The checklist may use template names from the course starter. Apply flexible matching:
-
-- `setup.py`: any setup or installation script. `requirements.txt` + documented setup instructions in README can satisfy this.
-- `main.py`: any entry point. A frontend in `docs/` or `app/`, or a clear CLI entry point counts.
-- `scripts/make_dataset.py`: exact or equivalent data acquisition script.
-- `scripts/build_features.py`: any feature engineering or preprocessing script (e.g. `preprocess.py`).
-- `scripts/model.py`: any model training script(s). Multiple model files (e.g. `naive_baseline.py`, `classical.py`) collectively satisfy this.
-- `models/`: directory exists.
-- `data/raw/`, `data/processed/`, `data/outputs/`: directories exist.
-- `notebooks/`: directory exists with at least one notebook for REPO1.
-- `.gitignore`: file exists and covers `.env`.
-
-### Code Quality (CQ1-CQ6)
-
-- **CQ1 Modularized**: Check that all `.py` files use classes or functions, not loose procedural code.
-- **CQ2 __main__ guards**: Check that executable code is inside `if __name__ == "__main__"` blocks.
-- **CQ3 Descriptive names**: Skim variable and function names. Satisfied unless names are cryptic (single letters, abbreviations without context).
-- **CQ4 Docstrings**: Check that public classes and functions have docstrings.
-- **CQ5 AI attribution**: Check that `.py` files have an AI attribution comment (e.g. `# AI-assisted`).
-- **CQ6 External attribution**: Check for external library attribution where needed.
-
-### Git Best Practices (GIT1-GIT7)
-
-- **GIT1 Feature branches**: Check git history for branch-based development.
-- **GIT2 PR template**: Check if `.github/PULL_REQUEST_TEMPLATE/` exists with a template.
-- **GIT3 PRs only**: Check if recent commits to main come via merge commits (PRs).
-- **GIT4 PR summaries**: Check if merged PRs have summary sections (CI enforces this).
-- **GIT5 Substantive reviews**: Check if merged PRs have review comments. Mark satisfied only if evidence is clear.
-- **GIT6 .env not committed**: Check `.gitignore` includes `.env`. Check git history for any `.env` commits.
-- **GIT7 No large files**: Cannot fully verify but check `.gitignore` for data/model exclusions.
-
-### Project Novelty (NOV1-NOV2)
-
-Check README and code for novelty claims. A recommender system for federal spending data with custom scoring is likely novel (NOV1). Mark if clearly stated.
-
-### Pre-Submission (FS1-FS9)
-
-These require running code. Leave unchanged.
-
-## Step 3: Update the checklist
+## Step 5: Update the checklist
 
 Edit `.github/REQUIREMENTS_CHECKLIST.md`:
 
 1. For table-format items (M1-M7): change `⬜` to `✅` for satisfied items. Fill in the `Location` column with the actual file path(s).
 2. For list-format items: change `[ ]` to `[x]` for satisfied items.
-3. For items you marked "cannot determine": leave unchanged.
-4. Never mark an item as unsatisfied if it was already marked satisfied (`✅` or `[x]`). Existing checkmarks represent human judgment that you should not override.
+3. For items where the checklist uses a template filename but the project uses an equivalent: add a parenthetical note with the actual filename, e.g. `scripts/build_features.py` becomes `scripts/build_features.py (→ preprocess.py)`.
+4. Never uncheck an item that was already checked. Existing checkmarks represent human judgment.
 5. Update the **Status Summary** table at the bottom with correct counts and percentages.
 6. Update the `Last updated` date to today's date.
 
-**Important**: The repo structure section lists template filenames from the course. If the project uses different but equivalent filenames, note the actual filename in the Location column or inline, and mark the item satisfied.
+## Step 6: Regenerate the HTML dashboard
 
-## Step 4: Regenerate the HTML dashboard
+Run `python3 scripts/generate_checklist.py` to update `docs/checklist/index.html`.
 
-Run `python3 scripts/generate_checklist.py` to regenerate `docs/checklist/index.html` from the updated markdown.
+## Step 7: Open a PR
 
-## Step 5: Open a PR
-
-If any items changed status, open a pull request:
+If any items changed status, open a pull request.
 
 **Branch**: `audit/checklist-{today's date as YYYY-MM-DD}`
 
@@ -170,17 +158,17 @@ Automated checklist audit based on current repo state.
 ### Newly satisfied
 | Item | Evidence |
 |------|----------|
-| {ID} | {brief reason} |
+| {ID} | {brief reason — cite the evidence field or file} |
+
+### Judgment calls
+| Item | Decision | Reasoning |
+|------|----------|-----------|
+| {ID} | {satisfied / not satisfied} | {one sentence} |
 
 ### Could not determine
 | Item | Reason |
 |------|--------|
 | {ID} | {why} |
-
-### Repo structure mismatches
-| Expected | Actual | Note |
-|----------|--------|------|
-| {template name} | {real file} | {explanation} |
 ```
 
 If nothing changed, do not open a PR.

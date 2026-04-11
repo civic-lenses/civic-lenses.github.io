@@ -21,12 +21,11 @@
 #
 # For more information: https://github.github.com/gh-aw/introduction/overview/
 #
-# Reads the repo and intelligently evaluates which requirements checklist
-# items are satisfied. Updates REQUIREMENTS_CHECKLIST.md with current
-# status and regenerates the live HTML dashboard. Opens a PR with changes.
-# Human reviews and merges.
+# Evaluates which requirements checklist items are satisfied by combining
+# deterministic evidence (script) with AI judgment (this workflow).
+# Updates REQUIREMENTS_CHECKLIST.md and opens a PR for human review.
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"e67070e93b0237825a563e2c50149b9c9014d9b03e36a1ea632428af70ad7523","compiler_version":"v0.56.2"}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"8e87748746b0b9c4bef0f948b3d73a8ad6beae5be82f2f14b9ca276b93d828ad","compiler_version":"v0.56.2"}
 
 name: "Audit Checklist"
 "on":
@@ -889,7 +888,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           WORKFLOW_NAME: "Audit Checklist"
-          WORKFLOW_DESCRIPTION: "Reads the repo and intelligently evaluates which requirements checklist\nitems are satisfied. Updates REQUIREMENTS_CHECKLIST.md with current\nstatus and regenerates the live HTML dashboard. Opens a PR with changes.\nHuman reviews and merges."
+          WORKFLOW_DESCRIPTION: "Evaluates which requirements checklist items are satisfied by combining\ndeterministic evidence (script) with AI judgment (this workflow).\nUpdates REQUIREMENTS_CHECKLIST.md and opens a PR for human review."
           HAS_PATCH: ${{ steps.collect_output.outputs.has_patch }}
         with:
           script: |
