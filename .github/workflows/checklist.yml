@@ -5,13 +5,9 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths:
-      - ".github/REQUIREMENTS_CHECKLIST.md"
-      - "scripts/generate_checklist.py"
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   auto-check:
@@ -19,8 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Generate checklist page
-        run: python3 scripts/generate_checklist.py
+      - name: Build site
+        run: |
+          mkdir -p _site
+          cp -r docs/* _site/
+          python3 scripts/generate_checklist.py
+          cp -r docs/checklist _site/checklist
 
       - name: Write job summary
         run: |
@@ -31,14 +31,14 @@ jobs:
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "[View live checklist](https://civic-lenses.github.io/checklist/)" >> $GITHUB_STEP_SUMMARY
 
-      - name: Create pull request if checklist changed
-        uses: peter-evans/create-pull-request@v7
-        with:
-          commit-message: "chore: regenerate live checklist"
-          branch: "automation/checklist-regeneration"
-          delete-branch: true
-          title: "chore: regenerate live checklist"
-          body: |
-            Automated checklist regeneration.
-          add-paths: |
-            docs/checklist/index.html
+      - name: Deploy to gh-pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git checkout --orphan gh-pages-tmp
+          git rm -rf .
+          cp -r _site/* .
+          git add -A
+          git commit -m "deploy: regenerate site and checklist"
+          git push --force origin HEAD:gh-pages
