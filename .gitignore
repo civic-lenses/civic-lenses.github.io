@@ -36,6 +36,9 @@ notebooks/.ipynb_checkpoints/
 .vscode/
 .idea/
 
+# Local tool settings
+**/settings.local.json
+
 # OS
 .DS_Store
 Thumbs.db

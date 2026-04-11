@@ -40,41 +40,22 @@ import pandas as pd
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
+from config import RAW_DATA_DIR, PROCESSED_DATA_DIR, QUERY_TO_TOPIC
+
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
-RAW_DIR       = os.path.join("data", "raw")
-PROCESSED_DIR = os.path.join("data", "processed")
-
 RAW_FILES = {
-    "contracts": os.path.join(RAW_DIR, "doge_cancelled_contracts.csv"),
-    "grants":    os.path.join(RAW_DIR, "doge_cancelled_grants.csv"),
-    "leases":    os.path.join(RAW_DIR, "doge_cancelled_leases.csv"),
-    "agencies":  os.path.join(RAW_DIR, "usaspending_agencies.csv"),
-    "gdelt":     os.path.join(RAW_DIR, "gdelt_articles.csv"),
+    "contracts": os.path.join(RAW_DATA_DIR, "doge_cancelled_contracts.csv"),
+    "grants":    os.path.join(RAW_DATA_DIR, "doge_cancelled_grants.csv"),
+    "leases":    os.path.join(RAW_DATA_DIR, "doge_cancelled_leases.csv"),
+    "agencies":  os.path.join(RAW_DATA_DIR, "usaspending_agencies.csv"),
+    "gdelt":     os.path.join(RAW_DATA_DIR, "gdelt_articles.csv"),
 }
 
-OUTPUT_PATH = os.path.join(PROCESSED_DIR, "unified_contracts.csv")
-
-# ---------------------------------------------------------------------------
-# Topic mapping (GDELT query → topic label)
-# ---------------------------------------------------------------------------
-QUERY_TO_TOPIC = {
-    "government spending":   "general_spending",
-    "federal contracts":     "federal_contracts",
-    "government efficiency": "government_efficiency",
-    "DOGE savings":          "doge_scrutiny",
-    "federal budget cuts":   "government_efficiency",
-    "government waste":      "government_efficiency",
-    "healthcare spending":   "healthcare",
-    "defense contracts":     "defense",
-    "education funding":     "education",
-    "infrastructure":        "infrastructure",
-    "foreign aid":           "foreign_aid",
-    "scientific research":   "research",
-}
+OUTPUT_PATH = os.path.join(PROCESSED_DATA_DIR, "unified_contracts.csv")
 
 # Agency name keywords → topic
 AGENCY_TO_TOPIC = {
@@ -105,14 +86,17 @@ AGENCY_TO_TOPIC = {
     "housing":        "general_spending",
 }
 
-# Jargon words that hurt transparency score
+# Jargon words that hurt transparency score.
+# Only includes corporate buzzwords unlikely to carry real meaning in
+# a federal contract description. Words like "framework", "solution",
+# and "strategic" appear legitimately in government procurement and
+# are intentionally excluded.
 JARGON_WORDS = {
-    "synergize", "leverage", "stakeholder", "deliverable", "paradigm",
-    "bandwidth", "ecosystem", "holistic", "actionable", "robust",
-    "scalable", "streamline", "optimize", "facilitate", "utilize",
-    "strategic", "alignment", "cross-functional", "best practices",
-    "value-added", "proactive", "initiative", "framework", "innovative",
-    "solution", "empower", "dynamic", "cutting-edge", "mission-critical",
+    "synergize", "leverage", "paradigm",
+    "bandwidth", "ecosystem", "holistic", "actionable",
+    "scalable", "streamline", "facilitate", "utilize",
+    "alignment", "cross-functional", "best practices",
+    "value-added", "proactive", "empower", "cutting-edge",
 }
 
 
@@ -180,7 +164,8 @@ def normalize_leases(df: pd.DataFrame) -> pd.DataFrame:
     out["contract_id"]      = "DOGE_L_" + df.index.astype(str).str.zfill(6)
     out["item_type"]        = "lease"
     out["agency"]           = df["agency"].fillna("Unknown").str.strip()
-    out["vendor_recipient"] = df["location"].fillna("Unknown").str.strip()
+    out["vendor_recipient"] = df.get("vendor", df.get("lessor", df["agency"])).fillna("Unknown").str.strip()
+    out["location"]         = df["location"].fillna("").str.strip()
     out["description"]      = df["description"].fillna("").str.strip()
     out["value"]            = pd.to_numeric(df["value"], errors="coerce").fillna(0)
     out["savings"]          = pd.to_numeric(df["savings"], errors="coerce").fillna(0)
@@ -243,7 +228,7 @@ def add_doge_scrutiny(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     df["doge_scrutiny_score"] = (
         df["savings"] / df["value"].replace(0, float("nan"))
-    ).clip(upper=1.0).fillna(0.0)
+    ).clip(lower=0.0, upper=1.0).fillna(0.0)
     return df
 
 
@@ -498,7 +483,7 @@ def run_pipeline() -> pd.DataFrame:
     items = items.drop_duplicates(subset=["description", "agency", "value"])
 
     # 10. Save
-    os.makedirs(PROCESSED_DIR, exist_ok=True)
+    os.makedirs(PROCESSED_DATA_DIR, exist_ok=True)
     items.to_csv(OUTPUT_PATH, index=False)
     logger.info("Saved %d unified items → %s", len(items), OUTPUT_PATH)
 
