@@ -15,13 +15,7 @@ env/
 # Environment variables
 .env
 
-# Data (raw data can be large)
-data/raw/*
-data/processed/*
-data/outputs/*
-!data/raw/.gitkeep
-!data/processed/.gitkeep
-!data/outputs/.gitkeep
+
 
 # Models
 models/*
