@@ -1,3 +1,4 @@
+# AI-assisted (Claude Code, claude.ai) — https://claude.ai
 """Client for the SAM.gov API (requires free API key)."""
 
 import logging

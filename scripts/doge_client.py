@@ -1,3 +1,4 @@
+# AI-assisted (Claude Code, claude.ai) — https://claude.ai
 """Client for the DOGE.gov API (no auth required, beta v0.0.2)."""
 
 import logging

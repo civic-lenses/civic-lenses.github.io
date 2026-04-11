@@ -1,3 +1,4 @@
+# AI-assisted (Claude Code, claude.ai) — https://claude.ai
 """Project configuration — API endpoints and settings."""
 
 import os

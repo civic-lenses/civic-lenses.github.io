@@ -1,3 +1,4 @@
+# AI-assisted (Claude Code, claude.ai) — https://claude.ai
 """Client for the USAspending.gov API v2 (no auth required)."""
 
 import logging
