@@ -1,8 +1,13 @@
 // AI-assisted (Claude Code, claude.ai) — https://claude.ai
 
+import { connectGitHub, verifyToken } from "https://neevs.io/auth/lib.js";
+
 let appData = null;
 let selectedTopics = new Set(["healthcare", "education", "defense"]);
 let activeTab = "scrutiny";
+let currentUser = null;
+
+const AUTH_KEY = "civic-lenses-auth";
 
 const TOPIC_LABELS = {
   healthcare: "Healthcare",
@@ -198,6 +203,7 @@ function buildSidebar() {
         selectedTopics.add(topic);
       }
       item.classList.toggle("active", selectedTopics.has(topic));
+      if (currentUser) saveTopics(currentUser.login);
       render();
     });
   });
@@ -242,6 +248,7 @@ function buildMobileTopics() {
       document.querySelectorAll("#sidebar-categories .sidebar-nav-item").forEach(item => {
         item.classList.toggle("active", selectedTopics.has(item.dataset.topic));
       });
+      if (currentUser) saveTopics(currentUser.login);
       render();
     });
   });
@@ -266,7 +273,110 @@ document.querySelectorAll(".nav-item").forEach(item => {
   });
 });
 
-// Load data and initialize
+// ── Auth ──────────────────────────────────────────────────────
+
+function getStoredAuth() {
+  try {
+    return JSON.parse(localStorage.getItem(AUTH_KEY));
+  } catch {
+    return null;
+  }
+}
+
+function saveStoredAuth(auth) {
+  localStorage.setItem(AUTH_KEY, JSON.stringify(auth));
+}
+
+function clearStoredAuth() {
+  localStorage.removeItem(AUTH_KEY);
+}
+
+function loadSavedTopics(login) {
+  try {
+    const saved = localStorage.getItem(`civic-topics-${login}`);
+    if (saved) selectedTopics = new Set(JSON.parse(saved));
+  } catch {}
+}
+
+function saveTopics(login) {
+  if (login) {
+    localStorage.setItem(`civic-topics-${login}`, JSON.stringify([...selectedTopics]));
+  }
+}
+
+function updateAuthUI() {
+  const authBtn = document.getElementById("auth-btn");
+  const locationText = document.getElementById("location-text");
+  const mobileLocationText = document.getElementById("mobile-location-text");
+  const profileUser = document.getElementById("profile-user");
+  const profileAvatar = document.getElementById("profile-avatar");
+  const profileName = document.getElementById("profile-name");
+
+  if (currentUser) {
+    const location = currentUser.location || "Location not set";
+    locationText.textContent = location;
+    mobileLocationText.textContent = location;
+    profileUser.style.display = "flex";
+    profileAvatar.src = currentUser.avatar_url;
+    profileName.textContent = currentUser.name || currentUser.login;
+    authBtn.textContent = "Sign out";
+    authBtn.onclick = handleLogout;
+  } else {
+    locationText.textContent = "Sign in for location";
+    mobileLocationText.textContent = "Sign in";
+    profileUser.style.display = "none";
+    authBtn.textContent = "Sign in";
+    authBtn.onclick = handleLogin;
+  }
+}
+
+async function fetchGitHubUser(token) {
+  const resp = await fetch("https://api.github.com/user", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!resp.ok) return null;
+  return resp.json();
+}
+
+async function handleLogin() {
+  try {
+    const { token, username, avatarUrl } = await connectGitHub("read:user", "civic-lenses");
+    const user = await fetchGitHubUser(token);
+    currentUser = user || { login: username, avatar_url: avatarUrl };
+    saveStoredAuth({ token, user: currentUser });
+    loadSavedTopics(currentUser.login);
+    updateAuthUI();
+    render();
+  } catch (err) {
+    if (err.message === "OAuth flow cancelled") return;
+    console.warn("[auth] Login failed:", err.message);
+  }
+}
+
+function handleLogout() {
+  if (currentUser) saveTopics(currentUser.login);
+  currentUser = null;
+  clearStoredAuth();
+  updateAuthUI();
+}
+
+async function restoreAuth() {
+  const stored = getStoredAuth();
+  if (!stored || !stored.token) return;
+  try {
+    await verifyToken(stored.token);
+    currentUser = stored.user;
+    loadSavedTopics(currentUser.login);
+    updateAuthUI();
+  } catch {
+    clearStoredAuth();
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────────
+
+restoreAuth();
+
 fetch("data.json")
   .then(r => r.json())
   .then(data => {
@@ -275,6 +385,7 @@ fetch("data.json")
     buildMobileTopics();
     setupTabs();
     render();
+    updateAuthUI();
   })
   .catch(err => {
     document.getElementById("cards-grid").innerHTML =
