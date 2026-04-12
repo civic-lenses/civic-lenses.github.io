@@ -23,7 +23,7 @@
     <div class="sidebar-section">
       <div class="sidebar-section-label">Navigate</div>
       <ul class="sidebar-nav">
-        <li class="sidebar-nav-item active">
+        <li class="sidebar-nav-item active" data-page="feed">
           <svg class="sidebar-nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="6" height="6" rx="1.5"/>
             <rect x="11" y="3" width="6" height="6" rx="1.5"/>
@@ -31,54 +31,14 @@
             <rect x="11" y="11" width="6" height="6" rx="1.5"/>
           </svg>
           Feed
-          <span class="sidebar-nav-badge">5</span>
-        </li>
-        <li class="sidebar-nav-item">
-          <svg class="sidebar-nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="9" cy="9" r="6"/>
-            <line x1="13.5" y1="13.5" x2="17" y2="17"/>
-          </svg>
-          Search contracts
-        </li>
-        <li class="sidebar-nav-item">
-          <svg class="sidebar-nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
-            <path d="M10 3L12.3 7.8H17.5L13.3 11.2L15 16.5L10 13.2L5 16.5L6.7 11.2L2.5 7.8H7.7L10 3Z"/>
-          </svg>
-          Watchlist
-        </li>
-        <li class="sidebar-nav-item">
-          <svg class="sidebar-nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 6h14M3 10h10M3 14h7"/>
-          </svg>
-          Spending trends
+          <span class="sidebar-nav-badge" id="feed-badge"></span>
         </li>
       </ul>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-label">Categories</div>
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-item">
-          <svg class="sidebar-nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M7 3v4a2 2 0 01-2 2H3m14-6v4a2 2 0 01-2 2h-2M7 17v-4a2 2 0 012-2h2a2 2 0 012 2v4"/>
-            <circle cx="10" cy="6" r="3"/>
-          </svg>
-          Healthcare
-        </li>
-        <li class="sidebar-nav-item">
-          <svg class="sidebar-nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 17V7l6-4 6 4v10H4z"/>
-            <path d="M8 17v-5h4v5"/>
-          </svg>
-          Education
-        </li>
-        <li class="sidebar-nav-item">
-          <svg class="sidebar-nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 2L3 6v8l7 4 7-4V6l-7-4z"/>
-          </svg>
-          Defense
-        </li>
-      </ul>
+      <ul class="sidebar-nav" id="sidebar-categories"></ul>
     </div>
 
     <div class="sidebar-profile">
@@ -91,13 +51,8 @@
             </svg>
             North Carolina
           </div>
-          <a class="sidebar-edit-link">Edit</a>
         </div>
-        <div class="sidebar-topics">
-          <span class="sidebar-topic">Healthcare</span>
-          <span class="sidebar-topic">Education</span>
-          <span class="sidebar-topic">Defense</span>
-        </div>
+        <div class="sidebar-topics" id="sidebar-selected-topics"></div>
       </div>
     </div>
   </aside>
@@ -118,13 +73,7 @@
     </div>
 
     <!-- Mobile Topics -->
-    <div class="mobile-topics">
-      <span class="mobile-topic active">All</span>
-      <span class="mobile-topic">Healthcare</span>
-      <span class="mobile-topic">Education</span>
-      <span class="mobile-topic">Defense</span>
-      <span class="mobile-topic">Infrastructure</span>
-    </div>
+    <div class="mobile-topics" id="mobile-topics"></div>
 
     <!-- Top Bar -->
     <div class="topbar">
@@ -133,138 +82,28 @@
           <h1 class="page-title">Contracts worth your attention</h1>
           <div class="topbar-stats">
             <div class="stat-item">
-              <div class="stat-value stat-copper">$59.7M</div>
+              <div class="stat-value stat-copper" id="stat-value">--</div>
               <div class="stat-label">Under review</div>
             </div>
             <div class="stat-item">
-              <div class="stat-value stat-navy">5</div>
+              <div class="stat-value stat-navy" id="stat-flagged">--</div>
               <div class="stat-label">Flagged</div>
             </div>
           </div>
         </div>
 
         <div class="tabs">
-          <button class="tab active">Under scrutiny <span class="tab-count">3</span></button>
-          <button class="tab">Near you <span class="tab-count">8</span></button>
-          <button class="tab">Expiring soon <span class="tab-count">4</span></button>
-          <button class="tab">Just cut <span class="tab-count">3</span></button>
+          <button class="tab active" data-tab="scrutiny">Under scrutiny <span class="tab-count" id="tab-scrutiny-count">0</span></button>
+          <button class="tab" data-tab="high-value">High value <span class="tab-count" id="tab-value-count">0</span></button>
+          <button class="tab" data-tab="just-cut">Just cut <span class="tab-count" id="tab-cut-count">0</span></button>
         </div>
       </div>
     </div>
 
     <!-- Feed -->
     <div class="feed">
-
-      <div class="feed-section-label">High scrutiny &middot; 2 contracts</div>
-
-      <div class="cards-grid">
-
-        <!-- Card 1 -->
-        <div class="contract-card">
-          <div class="card-header">
-            <span class="agency-tag">Dept. of Education</span>
-            <span class="scrutiny-badge scrutiny-high">
-              <span class="dot"></span>
-              High scrutiny
-            </span>
-          </div>
-          <div class="card-title">Strategic consulting services for workforce readiness alignment</div>
-          <div class="card-meta">
-            <span class="meta-item meta-amount">$18.4M</span>
-            <span class="meta-sep"></span>
-            <span class="meta-item">Booz Allen Hamilton</span>
-            <span class="meta-sep"></span>
-            <span class="meta-item">Awarded Jan 2024</span>
-          </div>
-          <div class="card-flags">
-            <span class="flag flag-doge">DOGE flagged</span>
-            <span class="flag flag-sole">Sole-source</span>
-            <span class="flag flag-vague">Vague description</span>
-          </div>
-          <div class="card-reason">No competing bids were solicited. Contract description contains no measurable deliverables. 14 news articles flagged by GDELT in last 30 days.</div>
-          <div class="card-actions">
-            <button class="action-btn primary">Learn more</button>
-            <button class="action-btn">Share</button>
-            <button class="action-btn">Contact rep</button>
-          </div>
-        </div>
-
-        <!-- Card 2 -->
-        <div class="contract-card">
-          <div class="card-header">
-            <span class="agency-tag">HHS</span>
-            <span class="scrutiny-badge scrutiny-high">
-              <span class="dot"></span>
-              High scrutiny
-            </span>
-          </div>
-          <div class="card-title">Community health outreach and patient engagement services</div>
-          <div class="card-meta">
-            <span class="meta-item meta-amount">$7.1M</span>
-            <span class="meta-sep"></span>
-            <span class="meta-item">Health Dynamics LLC</span>
-            <span class="meta-sep"></span>
-            <span class="meta-item">NC-based</span>
-          </div>
-          <div class="card-flags">
-            <span class="flag flag-overrun">Cost overrun +42%</span>
-            <span class="flag flag-renewal">Up for renewal</span>
-          </div>
-          <div class="card-reason">Original award was $5M. Three modifications totaling $2.1M added over 18 months. Renewal decision due in 60 days.</div>
-          <div class="card-actions">
-            <button class="action-btn primary">Learn more</button>
-            <button class="action-btn">Share</button>
-            <button class="action-btn">Contact rep</button>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="feed-section-label">Moderate scrutiny &middot; 1 contract</div>
-
-      <div class="cards-grid">
-
-        <!-- Card 3 -->
-        <div class="contract-card">
-          <div class="card-header">
-            <span class="agency-tag">Dept. of Defense</span>
-            <span class="scrutiny-badge scrutiny-med">
-              <span class="dot"></span>
-              Watch
-            </span>
-          </div>
-          <div class="card-title">Cybersecurity infrastructure maintenance — Fort Liberty operations</div>
-          <div class="card-meta">
-            <span class="meta-item meta-amount">$34.2M</span>
-            <span class="meta-sep"></span>
-            <span class="meta-item">SAIC</span>
-            <span class="meta-sep"></span>
-            <span class="meta-item">Fayetteville, NC</span>
-          </div>
-          <div class="card-flags">
-            <span class="flag flag-sole">Sole-source</span>
-          </div>
-          <div class="card-reason">Sole-source award citing national security exemption. Contract is large relative to category average ($12M). No media scrutiny flagged.</div>
-          <div class="card-actions">
-            <button class="action-btn primary">Learn more</button>
-            <button class="action-btn">Share</button>
-          </div>
-        </div>
-
-        <!-- Info Banner -->
-        <div class="info-banner">
-          <div class="info-icon">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <circle cx="9" cy="9" r="7.5" stroke="#fff" stroke-width="1.5"/>
-              <line x1="9" y1="5.5" x2="9" y2="9.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
-              <circle cx="9" cy="12.5" r="0.8" fill="#fff"/>
-            </svg>
-          </div>
-          <div class="info-text"><strong>3 contracts just cut in NC</strong> totaling $22.1M in terminated spending. Switch to "Just cut" to see the full impact breakdown.</div>
-        </div>
-
-      </div>
-
+      <div id="feed-section-label" class="feed-section-label"></div>
+      <div class="cards-grid" id="cards-grid"></div>
     </div>
   </main>
 </div>
