@@ -38,12 +38,16 @@ def main():
         recs = model.recommend([topic], top_n=20, alpha=0.7)
         records = []
         for _, row in recs.iterrows():
+            def clean(val, fallback=""):
+                s = str(val) if pd.notna(val) else fallback
+                return fallback if s.lower() == "nan" else s
+
             records.append({
-                "contract_id": str(row.get("contract_id", "")),
-                "agency": str(row.get("agency", "")),
-                "vendor": str(row.get("vendor_recipient", "")),
-                "description": str(row.get("description", ""))[:200],
-                "topic": str(row.get("topic", "")),
+                "contract_id": clean(row.get("contract_id")),
+                "agency": clean(row.get("agency"), "Unknown Agency"),
+                "vendor": clean(row.get("vendor_recipient"), "Unknown Vendor"),
+                "description": clean(row.get("description"), "No description available")[:200],
+                "topic": clean(row.get("topic"), "general_spending"),
                 "value": float(row.get("value", 0)),
                 "savings": float(row.get("savings", 0)),
                 "scrutiny": float(row.get("doge_scrutiny_score", 0)),
