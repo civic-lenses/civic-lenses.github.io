@@ -383,27 +383,37 @@ function saveTopics(login) {
 }
 
 function updateAuthUI() {
-  const authBtn = document.getElementById("auth-btn");
-  const locationText = document.getElementById("location-text");
-  const mobileLocationText = document.getElementById("mobile-location-text");
+  const topBtn = document.getElementById("auth-btn-top");
+  const topLabel = document.getElementById("auth-btn-label");
+  const topAvatar = document.getElementById("auth-btn-avatar");
+  const topIcon = topBtn.querySelector(".github-icon");
+  const sidebarBtn = document.getElementById("auth-btn-sidebar");
   const profileUser = document.getElementById("profile-user");
   const profileAvatar = document.getElementById("profile-avatar");
   const profileName = document.getElementById("profile-name");
 
   if (currentUser) {
+    topLabel.textContent = currentUser.login;
+    topAvatar.src = currentUser.avatar_url;
+    topAvatar.style.display = "block";
+    topIcon.style.display = "none";
+    topBtn.onclick = handleLogout;
     profileUser.style.display = "flex";
     profileAvatar.src = currentUser.avatar_url;
     profileName.textContent = currentUser.name || currentUser.login;
-    authBtn.textContent = "Sign out";
-    authBtn.onclick = handleLogout;
+    sidebarBtn.textContent = "Sign out";
+    sidebarBtn.onclick = handleLogout;
     if (currentUser.location) {
       setLocationDisplay(currentUser.location);
     }
   } else {
+    topLabel.textContent = "Sign in with GitHub";
+    topAvatar.style.display = "none";
+    topIcon.style.display = "block";
+    topBtn.onclick = handleLogin;
     profileUser.style.display = "none";
-    authBtn.textContent = "Sign in";
-    authBtn.onclick = handleLogin;
-    // Location display handled by initLocation
+    sidebarBtn.textContent = "";
+    sidebarBtn.onclick = handleLogin;
   }
 }
 

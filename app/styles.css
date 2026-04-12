@@ -225,6 +225,43 @@ body {
   border: 1px solid rgba(255,255,255,0.06);
 }
 
+/* ── Auth Bar ── */
+.auth-bar {
+  position: fixed;
+  top: 16px;
+  right: 24px;
+  z-index: 200;
+}
+
+.auth-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 550;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.auth-button:hover {
+  background: var(--color-bg-surface-alt);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+.github-icon {
+  flex-shrink: 0;
+}
+
+.auth-avatar {
+  border-radius: 50%;
+}
+
 /* ── Main Content ── */
 .main {
   flex: 1;
@@ -664,6 +701,16 @@ body {
     color: #fff;
     border-color: var(--color-accent);
   }
+
+  .auth-bar {
+    top: 10px;
+    right: 12px;
+  }
+  .auth-button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .auth-button .github-icon { width: 16px; height: 16px; }
 
   .topbar { background: var(--color-bg-page); }
   .topbar-inner { padding: 0 20px; }
