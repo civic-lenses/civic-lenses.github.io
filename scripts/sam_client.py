@@ -87,25 +87,30 @@ class SAMClient:
 
         Args:
             keyword: Free-text search.
-            posted_from: Start date (MM/dd/yyyy).
-            posted_to: End date (MM/dd/yyyy).
+            posted_from: Start date (MM/dd/yyyy). Defaults to 90 days ago.
+            posted_to: End date (MM/dd/yyyy). Defaults to today.
             page: Page number (0-indexed).
             size: Results per page.
 
         Returns:
             DataFrame of opportunities.
         """
+        from datetime import datetime, timedelta
+
+        if posted_from is None:
+            posted_from = (datetime.now() - timedelta(days=90)).strftime("%m/%d/%Y")
+        if posted_to is None:
+            posted_to = datetime.now().strftime("%m/%d/%Y")
+
         params = {
             "api_key": self.api_key,
             "limit": size,
             "offset": page * size,
+            "postedFrom": posted_from,
+            "postedTo": posted_to,
         }
         if keyword:
             params["q"] = keyword
-        if posted_from:
-            params["postedFrom"] = posted_from
-        if posted_to:
-            params["postedTo"] = posted_to
 
         resp = self.session.get(SAM_OPPORTUNITIES_URL, params=params, timeout=60)
         resp.raise_for_status()

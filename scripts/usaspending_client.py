@@ -49,12 +49,17 @@ class USASpendingClient:
         Returns:
             DataFrame of awards.
         """
-        filters = {"keywords": keywords}
-        if award_type:
-            filters["award_type_codes"] = award_type
+        if award_type is None:
+            award_type = ["A", "B", "C", "D"]  # default to all contract types
+        filters = {"keywords": keywords, "award_type_codes": award_type}
 
         payload = {
             "filters": filters,
+            "fields": [
+                "Award ID", "Recipient Name", "Award Amount",
+                "Awarding Agency", "Awarding Sub Agency",
+                "Award Type", "Description", "Start Date", "End Date",
+            ],
             "page": page,
             "limit": limit,
             "sort": "Award Amount",
