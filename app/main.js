@@ -291,6 +291,84 @@ function clearStoredAuth() {
   localStorage.removeItem(AUTH_KEY);
 }
 
+// ── Location ──────────────────────────────────────────────────
+
+const LOCATION_KEY = "civic-lenses-location";
+
+function getSavedLocation() {
+  return localStorage.getItem(LOCATION_KEY);
+}
+
+function saveLocation(loc) {
+  localStorage.setItem(LOCATION_KEY, loc);
+  setLocationDisplay(loc);
+}
+
+function setLocationDisplay(text) {
+  const el = document.getElementById("location-text");
+  const mel = document.getElementById("mobile-location-text");
+  if (el) el.textContent = text;
+  if (mel) mel.textContent = text;
+}
+
+async function reverseGeocode(lat, lon) {
+  const resp = await fetch(
+    `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&zoom=5`,
+    { headers: { "Accept-Language": "en" } }
+  );
+  if (!resp.ok) return null;
+  const data = await resp.json();
+  return data.address?.state || data.address?.city || data.display_name?.split(",")[0] || null;
+}
+
+async function requestLocation() {
+  // Try browser geolocation first
+  if (navigator.geolocation) {
+    setLocationDisplay("Locating...");
+    try {
+      const pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 8000 });
+      });
+      const name = await reverseGeocode(pos.coords.latitude, pos.coords.longitude);
+      if (name) {
+        saveLocation(name);
+        return;
+      }
+    } catch {}
+  }
+  // Fallback: ask the user
+  const input = prompt("Enter your state or city:");
+  if (input && input.trim()) {
+    saveLocation(input.trim());
+  } else {
+    setLocationDisplay("Set location");
+  }
+}
+
+function initLocation() {
+  const saved = getSavedLocation();
+  if (currentUser?.location) {
+    setLocationDisplay(currentUser.location);
+  } else if (saved) {
+    setLocationDisplay(saved);
+  } else {
+    setLocationDisplay("Set location");
+  }
+
+  // Make location clickable for unauthenticated or location-less users
+  const sidebar = document.getElementById("sidebar-location");
+  const mobile = document.getElementById("mobile-location");
+  [sidebar, mobile].forEach(el => {
+    if (!el) return;
+    el.style.cursor = "pointer";
+    el.addEventListener("click", () => {
+      if (!currentUser?.location) requestLocation();
+    });
+  });
+}
+
+// ── Topics persistence ────────────────────────────────────────
+
 function loadSavedTopics(login) {
   try {
     const saved = localStorage.getItem(`civic-topics-${login}`);
@@ -313,20 +391,19 @@ function updateAuthUI() {
   const profileName = document.getElementById("profile-name");
 
   if (currentUser) {
-    const location = currentUser.location || "Location not set";
-    locationText.textContent = location;
-    mobileLocationText.textContent = location;
     profileUser.style.display = "flex";
     profileAvatar.src = currentUser.avatar_url;
     profileName.textContent = currentUser.name || currentUser.login;
     authBtn.textContent = "Sign out";
     authBtn.onclick = handleLogout;
+    if (currentUser.location) {
+      setLocationDisplay(currentUser.location);
+    }
   } else {
-    locationText.textContent = "Sign in for location";
-    mobileLocationText.textContent = "Sign in";
     profileUser.style.display = "none";
     authBtn.textContent = "Sign in";
     authBtn.onclick = handleLogin;
+    // Location display handled by initLocation
   }
 }
 
@@ -386,6 +463,7 @@ fetch("data.json")
     setupTabs();
     render();
     updateAuthUI();
+    initLocation();
   })
   .catch(err => {
     document.getElementById("cards-grid").innerHTML =
