@@ -15,7 +15,7 @@ All three must be **implemented, evaluated, and findable** in the repo.
 | M1 | 🤖 Naive baseline (majority class / mean predictor) | `scripts/naive_baseline.py` | ✅ |
 | M2 | 🤖 Classical (non-DL) ML model | `scripts/classical.py` | ✅ |
 | M3 | 🤖 Deep learning model | `scripts/deep_learning.py` | ✅ |
-| M4 | 👤 All three documented in README with file locations | | ⬜ |
+| M4 | 👤 All three documented in README with file locations | `README.md` | ✅ |
 | M5 | 👤 Rationale for each model written up in report | `docs/report.md` R07 | ✅ |
 | M6 | 👤 Selected final model clearly identified (and justified) | `docs/report.md` R13-R14 | ✅ |
 | M7 | 🤖 Trained model artifacts present or reproducible | `models/` | ✅ |
@@ -90,16 +90,16 @@ Format: NeurIPS/ICML-style paper, white paper, or technical report.
 
 - [x] 🤖 `README.md` — project description, setup instructions
 - [x] 🤖 `requirements.txt` — all dependencies pinned
-- [ ] 👤 `setup.py` — data acquisition / project setup pipeline
-- [ ] 👤 `main.py` — entry point / app launcher
+- [x] 👤 `setup.py` — data acquisition / project setup pipeline
+- [x] 👤 `main.py` — entry point / app launcher
 - [x] 🤖 `scripts/make_dataset.py`
 - [x] 🤖 `scripts/build_features.py`
 - [x] 🤖 `scripts/model.py`
 - [x] 🤖 `models/` — directory exists (artifacts generated after training)
 - [x] 🤖 `data/raw/`, `data/processed/`, `data/outputs/`
-- [ ] 🤖 `notebooks/` — directory exists
+- [x] 🤖 `notebooks/` — directory exists
 - [x] 🤖 `.gitignore`
-- [ ] 👤 **REPO1** — At least one exploration notebook in `notebooks/`
+- [x] 👤 **REPO1** — At least one exploration notebook in `notebooks/`
 
 ### Code Quality ⚠️
 
@@ -149,13 +149,13 @@ Run through this before final submission:
 
 | Category | Done | Total | % |
 |----------|------|-------|---|
-| Modeling | 6 | 7 | 86% |
+| Modeling | 7 | 7 | 100% |
 | Experimentation | 6 | 6 | 100% |
 | App | 2 | 5 | 40% |
 | Written Report | 16 | 17 | 94% |
 | Pitch | 0 | 5 | 0% |
-| Repo / Code Quality | 11 | 18 | 61% |
+| Repo / Code Quality | 15 | 18 | 83% |
 | Git Best Practices | 5 | 7 | 71% |
-| **Total** | **46** | **65** | **71%** |
+| **Total** | **51** | **65** | **78%** |
 
 > Last updated: 2026-04-12

@@ -23,11 +23,13 @@ Federal spending data is scattered across multiple government systems (SAM.gov, 
 
 ## Models
 
-| Model | Approach | Personalized? |
-|-------|----------|---------------|
-| Naive baseline | Rank by GDELT news volume per topic | No |
-| Classical ML | TF-IDF + cosine similarity, re-ranked by citizen impact score | Yes |
-| Deep learning | TBD | TBD |
+| Model | File | Approach | Personalized? |
+|-------|------|----------|---------------|
+| Naive baseline | `scripts/naive_baseline.py` | Rank by GDELT news volume per topic | No |
+| Classical ML | `scripts/classical.py` | TF-IDF + cosine similarity, re-ranked by citizen impact score | Yes |
+| Deep learning | `scripts/deep_learning.py` | Sentence Transformer embeddings + pairwise MLP ranker trained on DOGE scrutiny labels | Yes |
+
+**Selected model**: Classical ML (TF-IDF). See `docs/report.md` R13-R14 for justification.
 
 ## Project Structure
 
@@ -39,6 +41,8 @@ Federal spending data is scattered across multiple government systems (SAM.gov, 
 │   ├── preprocess.py          merge + feature engineering
 │   ├── naive_baseline.py      GDELT popularity baseline
 │   ├── classical.py           TF-IDF + cosine similarity recommender
+│   ├── deep_learning.py       Sentence Transformer + pairwise neural ranker
+│   ├── experiment.py          classical vs DL model comparison
 │   ├── generate_checklist.py  render requirements checklist HTML
 │   ├── gdelt_client.py        GDELT DOC API client
 │   ├── sam_client.py          SAM.gov API client
