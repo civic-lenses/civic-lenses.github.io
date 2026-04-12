@@ -41,9 +41,9 @@ The experiment must directly inform or validate a modeling/system decision.
 > **Zero-tolerance**: if the app doesn't run when graded → **0 for this section**.
 
 - [x] **APP1** 🤖 — App exists and runs inference only (no training in app code)
-- [ ] **APP2** 👤 — Good UX — polished interface, not a bare Streamlit demo
-- [ ] **APP3** 👤 — Publicly accessible via internet (deployed URL)
-- [ ] **APP4** 👤 — Live for at least **one week** after submission date (due 2026-04-14)
+- [x] **APP2** 👤 — Good UX — polished interface, not a bare Streamlit demo
+- [x] **APP3** 👤 — Publicly accessible via internet (deployed URL)
+- [x] **APP4** 👤 — Live for at least **one week** after submission date (due 2026-04-14)
 - [x] **APP5** 🤖 — Deployment URL recorded in `README.md`
 
 ---
@@ -151,11 +151,11 @@ Run through this before final submission:
 |----------|------|-------|---|
 | Modeling | 7 | 7 | 100% |
 | Experimentation | 6 | 6 | 100% |
-| App | 2 | 5 | 40% |
+| App | 5 | 5 | 100% |
 | Written Report | 16 | 17 | 94% |
 | Pitch | 0 | 5 | 0% |
 | Repo / Code Quality | 15 | 18 | 83% |
 | Git Best Practices | 5 | 7 | 71% |
-| **Total** | **51** | **65** | **78%** |
+| **Total** | **54** | **65** | **83%** |
 
 > Last updated: 2026-04-12

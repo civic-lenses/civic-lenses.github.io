@@ -47,4 +47,4 @@ jobs:
             Review the diff to see which items were verified.
           add-paths: |
             .github/REQUIREMENTS_CHECKLIST.md
-            docs/checklist/index.html
+            app/checklist/index.html
