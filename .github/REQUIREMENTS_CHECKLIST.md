@@ -154,8 +154,8 @@ Run through this before final submission:
 | App | 5 | 5 | 100% |
 | Written Report | 16 | 17 | 94% |
 | Pitch | 0 | 5 | 0% |
-| Repo / Code Quality | 15 | 18 | 83% |
+| Repo / Code Quality | 14 | 18 | 78% |
 | Git Best Practices | 5 | 7 | 71% |
-| **Total** | **54** | **65** | **83%** |
+| **Total** | **53** | **65** | **82%** |
 
 > Last updated: 2026-04-12

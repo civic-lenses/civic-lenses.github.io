@@ -1,0 +1,245 @@
+<!-- AI-assisted (Claude Code, claude.ai) — https://claude.ai -->
+<!-- AUTO-GENERATED — edit REQUIREMENTS_CHECKLIST.md, not this file -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Requirements Checklist — Civic Lenses</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f8f7f4; --surface: #ffffff; --border: #e5e2db;
+      --text: #1a1916; --text-muted: #6b6860;
+      --green: #16a34a; --green-bg: #f0fdf4;
+      --radius-sm: 6px; --radius-md: 12px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.07);
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100dvh; }
+    a { color: inherit; }
+    .container { width: 100%; max-width: 780px; margin: 0 auto; padding: 0 24px; }
+
+    /* header */
+    .site-header { border-bottom: 1px solid var(--border); padding: 20px 0; background: var(--surface); }
+    .site-header .container { display: flex; align-items: center; gap: 16px; }
+    .back-link { font-size: 0.85rem; color: var(--text-muted); text-decoration: none; }
+    .back-link:hover { color: var(--text); }
+    .header-title { font-size: 1rem; font-weight: 600; }
+
+    /* overall progress */
+    .overall { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);
+      padding: 24px; margin: 32px 0 24px; box-shadow: var(--shadow-sm); }
+    .overall-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+    .overall-pct { font-size: 2rem; font-weight: 700; }
+    .overall-label { font-size: 0.9rem; color: var(--text-muted); }
+    .progress-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-top: 4px; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 4px; transition: width .3s; }
+
+    /* sections */
+    .checklist-section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);
+      padding: 20px 24px; margin-bottom: 16px; box-shadow: var(--shadow-sm); }
+    .section-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    .section-header h2 { font-size: 0.95rem; font-weight: 600; }
+    .section-count { font-size: 0.8rem; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+    .checklist-section .progress-bar { margin-bottom: 16px; }
+
+    /* item table */
+    .item-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .item-table tr { border-top: 1px solid var(--border); }
+    .item-table tr:first-child { border-top: none; }
+    .item-table td { padding: 7px 4px; vertical-align: top; }
+    .item-glyph { width: 20px; color: var(--text-muted); font-size: 0.75rem; padding-top: 8px; }
+    .item-id { width: 52px; font-weight: 600; font-size: 0.78rem; white-space: nowrap; padding-top: 8px; }
+    .item-label { color: var(--text-muted); line-height: 1.45; }
+    tr.done .item-glyph { color: var(--green); }
+    tr.done .item-id { color: var(--text); }
+    tr.done .item-label { color: var(--text); }
+
+    /* footer */
+    .page-footer { text-align: center; font-size: 0.8rem; color: var(--text-muted); padding: 32px 0 48px; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="back-link" href="../">← Civic Lenses</a>
+      <span class="header-title">Requirements Checklist</span>
+    </div>
+  </header>
+
+  <main style="padding-bottom: 48px;">
+    <div class="container">
+      <div class="overall">
+        <div class="overall-row">
+          <span class="overall-pct">71%</span>
+          <span class="overall-label">54 of 76 items complete</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:71%"></div></div>
+      </div>
+      
+    <section class="checklist-section">
+      <div class="section-header">
+        <h2>1. Modeling — Three Required Approaches ⚠️</h2>
+        <span class="section-count">7/7</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+      <table class="item-table">
+        <tbody><tr class="done"><td class="item-glyph">✓</td><td class="item-id">M1</td><td class="item-label">🤖 Naive baseline (majority class / mean predictor)</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">M2</td><td class="item-label">🤖 Classical (non-DL) ML model</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">M3</td><td class="item-label">🤖 Deep learning model</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">M4</td><td class="item-label">👤 All three documented in README with file locations</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">M5</td><td class="item-label">👤 Rationale for each model written up in report</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">M6</td><td class="item-label">👤 Selected final model clearly identified (and justified)</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">M7</td><td class="item-label">🤖 Trained model artifacts present or reproducible</td></tr>
+</tbody>
+      </table>
+    </section>
+
+    <section class="checklist-section">
+      <div class="section-header">
+        <h2>2. Required Experimentation ⚠️</h2>
+        <span class="section-count">6/6</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+      <table class="item-table">
+        <tbody><tr class="done"><td class="item-glyph">✓</td><td class="item-id">EX1</td><td class="item-label">👤 — Experiment is well-motivated: poses a specific question about your system</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">EX2</td><td class="item-label">👤 — Experimental plan documented (hypothesis, method, metrics)</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">EX3</td><td class="item-label">👤 — Results reported with numbers/visualizations</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">EX4</td><td class="item-label">👤 — Interpretation written: what do the results tell you?</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">EX5</td><td class="item-label">👤 — Experiment directly informs a modeling or system design decision</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">EX6</td><td class="item-label">👤 — Actionable recommendations drawn from experiment</td></tr>
+</tbody>
+      </table>
+    </section>
+
+    <section class="checklist-section">
+      <div class="section-header">
+        <h2>3. Interactive Application ⚠️</h2>
+        <span class="section-count">5/5</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+      <table class="item-table">
+        <tbody><tr class="done"><td class="item-glyph">✓</td><td class="item-id">APP1</td><td class="item-label">🤖 — App exists and runs inference only (no training in app code)</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">APP2</td><td class="item-label">👤 — Good UX — polished interface, not a bare Streamlit demo</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">APP3</td><td class="item-label">👤 — Publicly accessible via internet (deployed URL)</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">APP4</td><td class="item-label">👤 — Live for at least one week after submission date (due 2026-04-14)</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">APP5</td><td class="item-label">🤖 — Deployment URL recorded in README.md</td></tr>
+</tbody>
+      </table>
+    </section>
+
+    <section class="checklist-section">
+      <div class="section-header">
+        <h2>4. Written Report ⚠️</h2>
+        <span class="section-count">16/17</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:94%"></div></div>
+      <table class="item-table">
+        <tbody><tr class="done"><td class="item-glyph">✓</td><td class="item-id">R01</td><td class="item-label">👤 — Problem Statement</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">R02</td><td class="item-label">👤 — Data Sources (with provenance and access method)</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">R03</td><td class="item-label">👤 — Related Work (review of prior literature)</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">R04</td><td class="item-label">👤 — Evaluation Strategy &amp; Metrics (with justification — *&quot;this is critical&quot;*)</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">R05</td><td class="item-label">👤 — Modeling Approach → Data Processing Pipeline (with rationale per step)</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">R06</td><td class="item-label">👤 — Hyperparameter Tuning Strategy</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">R07</td><td class="item-label">👤 — Models Evaluated: Naive baseline, Classical ML, Deep learning (with rationale)</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">R08</td><td class="item-label">👤 — Results: quantitative comparison across all models and metrics</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id">R09</td><td class="item-label">👤 — Results: visualizations and confusion matrices</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">R10</td><td class="item-label">👤 — Error Analysis: 5 specific mispredictions identified</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">R11</td><td class="item-label">👤 — Error Analysis: root cause explained for each</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">R12</td><td class="item-label">👤 — Error Analysis: concrete, specific mitigation strategies per case</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">R13</td><td class="item-label">👤 — Experiment Write-Up (plan → results → interpretation → recommendations)</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">R14</td><td class="item-label">👤 — Conclusions</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">R15</td><td class="item-label">👤 — Future Work (&quot;what would you do with another semester?&quot;)</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">R16</td><td class="item-label">👤 — Commercial Viability Statement</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">R17</td><td class="item-label">👤 — Ethics Statement</td></tr>
+</tbody>
+      </table>
+    </section>
+
+    <section class="checklist-section">
+      <div class="section-header">
+        <h2>5. In-Class Pitch (5 min hard stop) ⚠️</h2>
+        <span class="section-count">0/5</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+      <table class="item-table">
+        <tbody><tr class="open"><td class="item-glyph">○</td><td class="item-id">P1</td><td class="item-label">👤 — Problem &amp; Motivation slide(s)</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id">P2</td><td class="item-label">👤 — Approach Overview slide(s)</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id">P3</td><td class="item-label">👤 — Live Demo prepared and rehearsed</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id">P4</td><td class="item-label">👤 — Results, Insights, or Key Findings slide(s)</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id">P5</td><td class="item-label">👤 — Presentation stays within 5 minutes</td></tr>
+</tbody>
+      </table>
+    </section>
+
+    <section class="checklist-section">
+      <div class="section-header">
+        <h2>6. Code &amp; Repository</h2>
+        <span class="section-count">20/27</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:74%"></div></div>
+      <table class="item-table">
+        <tbody><tr class="done"><td class="item-glyph">✓</td><td class="item-id"></td><td class="item-label">🤖 README.md — project description, setup instructions</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id"></td><td class="item-label">🤖 requirements.txt — all dependencies pinned</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id"></td><td class="item-label">👤 setup.py — data acquisition / project setup pipeline</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id"></td><td class="item-label">👤 main.py — entry point / app launcher</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id"></td><td class="item-label">🤖 scripts/make_dataset.py</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id"></td><td class="item-label">🤖 scripts/build_features.py</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id"></td><td class="item-label">🤖 scripts/model.py</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id"></td><td class="item-label">🤖 models/ — directory exists (artifacts generated after training)</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id"></td><td class="item-label">🤖 data/raw/, data/processed/, data/outputs/</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id"></td><td class="item-label">🤖 notebooks/ — directory exists</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id"></td><td class="item-label">🤖 .gitignore</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id"></td><td class="item-label">👤 REPO1 — At least one exploration notebook in notebooks/</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">CQ1</td><td class="item-label">🤖 — All code modularized into classes/functions (no loose executable code)</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">CQ2</td><td class="item-label">🤖 — No executable code outside if __name__ == &quot;__main__&quot; guards</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id">CQ3</td><td class="item-label">👤 — Descriptive variable names throughout</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id">CQ4</td><td class="item-label">👤 — Docstrings on all public functions</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">CQ5</td><td class="item-label">🤖 — AI usage attributed at top of each file that used AI assistance (link to source required)</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id">CQ6</td><td class="item-label">👤 — External code/libraries attributed at top of relevant files</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">GIT1</td><td class="item-label">🤖 — Feature branches in use</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">GIT2</td><td class="item-label">🤖 — PR template in .github/PULL_REQUEST_TEMPLATE/</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id">GIT3</td><td class="item-label">👤 — All code merged via PRs (no direct commits to main) — enforced by branch protection</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">GIT4</td><td class="item-label">🤖 — Every PR has a meaningful Summary — enforced by PR Summary CI check</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id">GIT5</td><td class="item-label">👤 — Every PR reviewed with substantive comments — CODEOWNER approval required</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">GIT6</td><td class="item-label">🤖 — .env is never committed (check .gitignore) — enforced by Secret Scan CI check</td></tr>
+<tr class="done"><td class="item-glyph">✓</td><td class="item-id">GIT7</td><td class="item-label">🤖 — Large data files / model binaries are never committed (50 MB limit) — enforced by Large File Scan CI check</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id">NOV1</td><td class="item-label">👤 — Working on a dataset/problem with no prior modeling approaches, OR</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id">NOV2</td><td class="item-label">👤 — Clearly explains what is new/novel vs. prior approaches (with citations), achieves near-SOTA or better explainability</td></tr>
+</tbody>
+      </table>
+    </section>
+
+    <section class="checklist-section">
+      <div class="section-header">
+        <h2>7. Pre-Submission Checklist</h2>
+        <span class="section-count">0/9</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+      <table class="item-table">
+        <tbody><tr class="open"><td class="item-glyph">○</td><td class="item-id"></td><td class="item-label">👤 FS1: python setup.py runs end-to-end without errors</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id"></td><td class="item-label">👤 FS2: python scripts/build_features.py produces processed data</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id"></td><td class="item-label">👤 FS3: python scripts/model.py trains all three models and writes artifacts to models/</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id"></td><td class="item-label">👤 FS4: App launches and is reachable in browser</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id"></td><td class="item-label">👤 FS5: Live deployment URL is working and accessible without login</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id"></td><td class="item-label">👤 FS6: README deployment link updated to actual URL</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id"></td><td class="item-label">👤 FS7: Written report submitted in the required format</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id"></td><td class="item-label">👤 FS8: Pitch deck/slides prepared</td></tr>
+<tr class="open"><td class="item-glyph">○</td><td class="item-id"></td><td class="item-label">👤 FS9: Repo is public (or access granted to grader)</td></tr>
+</tbody>
+      </table>
+    </section>
+
+    </div>
+  </main>
+
+  <footer class="page-footer">
+    Auto-generated from <code>REQUIREMENTS_CHECKLIST.md</code> · 2026-04-12 22:10 UTC
+  </footer>
+</body>
+</html>
