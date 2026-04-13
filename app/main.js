@@ -526,8 +526,17 @@ function render() {
 
   sectionLabel.innerHTML = `
     <span>${tabLabels[activeTab]} \u00B7 ${filtered.length} contracts \u00B7 ranked by relevance to your topics</span>
-    <input class="feed-search" id="feed-search" type="text" placeholder="Search contracts..." value="${esc(searchQuery)}">
     ${renderViewToggle()}`;
+
+  // Search row (separate from section label)
+  let searchRow = document.getElementById("feed-search-row");
+  if (!searchRow) {
+    searchRow = document.createElement("div");
+    searchRow.id = "feed-search-row";
+    searchRow.className = "feed-search-row";
+    sectionLabel.parentNode.insertBefore(searchRow, sectionLabel.nextSibling);
+  }
+  searchRow.innerHTML = `<input class="feed-search" id="feed-search" type="text" placeholder="Search contracts by agency, vendor, description, state..." value="${esc(searchQuery)}">`;
 
   // Restore focus and cursor position
   if (searchFocused) {
