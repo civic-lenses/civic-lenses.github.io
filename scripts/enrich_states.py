@@ -1,4 +1,5 @@
 # AI-assisted (Claude Code, claude.ai) — https://claude.ai
+# External libraries: requests (HTTP client) — https://requests.readthedocs.io — Apache-2.0 license
 """
 Enrich unified contracts with state-level geographic data.
 
@@ -140,90 +141,90 @@ def extract_state_from_recipient(name: str) -> str | None:
     """Extract US state code from a grant recipient name."""
     if not name or not isinstance(name, str):
         return None
-    u = name.strip().upper()
+    upper_name = name.strip().upper()
 
     # 1. Trailing ", XX" (e.g., "City of Jacksonville, FL")
-    m = _CITY_STATE.search(u)
-    if m and m.group(1) in STATE_ABBREVS:
-        return m.group(1)
+    match = _CITY_STATE.search(upper_name)
+    if match and match.group(1) in STATE_ABBREVS:
+        return match.group(1)
 
     # 2. State abbreviation prefix with agency word:
     #    "TX DEPT OF...", "TX ST DEPARTMENT OF..."
-    m = re.match(
+    match = re.match(
         r"^([A-Z]{2})\s+(ST\s+)?(DEPT?|DEPARTMENT|DIVISION|BOARD|OFFICE|CABINET|COMMISSION)",
-        u,
+        upper_name,
     )
-    if m and m.group(1) in STATE_ABBREVS:
-        return m.group(1)
+    if match and match.group(1) in STATE_ABBREVS:
+        return match.group(1)
 
     # 3. Abbreviation suffix after agency-like name:
     #    "HEALTH & HUMAN SVC COMMN TX"
-    m = re.search(r"\s([A-Z]{2})$", u)
-    if m and m.group(1) in STATE_ABBREVS:
+    match = re.search(r"\s([A-Z]{2})$", upper_name)
+    if match and match.group(1) in STATE_ABBREVS:
         agency_words = {"DEPT", "DEPARTMENT", "HEALTH", "COMMISSION", "COMMN",
                         "BOARD", "DIVISION", "CABINET", "SERVICES", "HUMAN",
                         "WELFARE", "PUBLIC"}
-        if any(w in u for w in agency_words):
-            return m.group(1)
+        if any(kw in upper_name for kw in agency_words):
+            return match.group(1)
 
     # 4. "STATE OF <state name>"
-    m = re.match(
+    match = re.match(
         r"STATE\s+OF\s+(.+?)(?:\s+(?:DEPARTMENT|DEPT|ENERGY|OFFICE|BOARD|COMMISSION|UNIVERSITY)|$)",
-        u,
+        upper_name,
     )
-    if m:
-        sp = m.group(1).strip().rstrip(" -")
-        if sp in US_STATES:
-            return US_STATES[sp]
+    if match:
+        state_part = match.group(1).strip().rstrip(" -")
+        if state_part in US_STATES:
+            return US_STATES[state_part]
 
     # 5. Inverted: ", <state name> ..." (e.g., "HEALTH, FLORIDA DEPARTMENT OF")
-    m = re.search(r",\s*(" + _STATE_NAMES_RE + r")\b", u)
-    if m and m.group(1).upper() in US_STATES:
-        return US_STATES[m.group(1).upper()]
+    match = re.search(r",\s*(" + _STATE_NAMES_RE + r")\b", upper_name)
+    if match and match.group(1).upper() in US_STATES:
+        return US_STATES[match.group(1).upper()]
 
     # 6. "<State Name> Department/State University..." at start
-    m = re.match(
+    match = re.match(
         r"(" + _STATE_NAMES_RE + r")\s+(DEPARTMENT|DEPT|DIVISION|BOARD|OFFICE|COMMISSION|STATE|COMPTROLLER|A\s*&\s*M|SOUTHERN)",
-        u,
+        upper_name,
     )
-    if m:
-        return US_STATES[m.group(1).upper()]
+    if match:
+        return US_STATES[match.group(1).upper()]
 
     # 7. "DEPARTMENT OF <topic> <STATE>"
-    m = re.search(r"DEPARTMENT OF\s+\w+\s+(" + _STATE_NAMES_RE + r")\b", u)
-    if m:
-        return US_STATES[m.group(1).upper()]
+    match = re.search(r"DEPARTMENT OF\s+\w+\s+(" + _STATE_NAMES_RE + r")\b", upper_name)
+    if match:
+        return US_STATES[match.group(1).upper()]
 
     # 8. "UNIVERSITY OF <state>"
-    m = re.search(r"UNIVERSITY\s+OF\s+(" + _STATE_NAMES_RE + r")", u)
-    if m:
-        return US_STATES[m.group(1).upper()]
+    match = re.search(r"UNIVERSITY\s+OF\s+(" + _STATE_NAMES_RE + r")", upper_name)
+    if match:
+        return US_STATES[match.group(1).upper()]
 
     # 9. Known institutions (hard-coded universities, hospitals)
     for keyword, state in KNOWN_INSTITUTIONS.items():
-        if keyword in u:
+        if keyword in upper_name:
             return state
 
     # 10. State name + US-org signal word co-occurring
-    m = _STATE_NAME_PATTERN.search(u)
-    if m:
-        state_name = m.group(1).upper()
+    match = _STATE_NAME_PATTERN.search(upper_name)
+    if match:
+        state_name = match.group(1).upper()
         abbrev = US_STATES.get(state_name)
-        if abbrev and any(sig in u for sig in _US_ORG_SIGNALS):
+        if abbrev and any(sig in upper_name for sig in _US_ORG_SIGNALS):
             # Guard against "GEORGIA" matching the country
-            if state_name == "GEORGIA" and any(w in u for w in ("TBILISI", "CAUCASUS")):
+            if state_name == "GEORGIA" and any(kw in upper_name for kw in ("TBILISI", "CAUCASUS")):
                 return None
             return abbrev
 
     # 11. City name in recipient (including inverted "City of X")
     for city, state in CITY_TO_STATE.items():
-        if city in u:
+        if city in upper_name:
             return state
 
     # 12. "X, City of" or "X, County of" pattern
-    m = re.match(r"^(.+?),\s*(?:CITY|COUNTY|TOWN|VILLAGE)\s+OF", u)
-    if m:
-        place = m.group(1).strip()
+    match = re.match(r"^(.+?),\s*(?:CITY|COUNTY|TOWN|VILLAGE)\s+OF", upper_name)
+    if match:
+        place = match.group(1).strip()
         if place in CITY_TO_STATE:
             return CITY_TO_STATE[place]
 
@@ -260,9 +261,9 @@ def lookup_contract_states_batch(piids: list[str], batch_size: int = 50) -> dict
             resp = requests.post(url, json=payload, timeout=30)
             resp.raise_for_status()
             data = resp.json()
-            for r in data.get("results", []):
-                aid = r.get("Award ID", "")
-                state = r.get("Place of Performance State Code", "")
+            for record in data.get("results", []):
+                aid = record.get("Award ID", "")
+                state = record.get("Place of Performance State Code", "")
                 if aid and state and state in STATE_ABBREVS:
                     result[aid] = state
         except Exception as e:
@@ -277,6 +278,7 @@ def lookup_contract_states_batch(piids: list[str], batch_size: int = 50) -> dict
 
 
 def main():
+    """Enrich unified_contracts.csv with state codes from leases, grants, and USAspending."""
     path = os.path.join(PROCESSED_DATA_DIR, "unified_contracts.csv")
     df = pd.read_csv(path)
     logger.info("Loaded %d items", len(df))

@@ -63,6 +63,7 @@ TOP_N = 20  # recommendations per persona
 # ---------------------------------------------------------------------------
 
 def jaccard(set_a: set, set_b: set) -> float:
+    """Jaccard similarity between two sets (|intersection| / |union|)."""
     if not set_a and not set_b:
         return 1.0
     return len(set_a & set_b) / len(set_a | set_b)
@@ -121,7 +122,7 @@ def characterize_unique(
 # ---------------------------------------------------------------------------
 
 def run_experiment(contracts: pd.DataFrame) -> dict:
-    """Run the full classical vs DL comparison experiment."""
+    """Run cross-model comparison across 5 personas and report overlap, quality, and design decision."""
 
     overall_scrutiny = contracts["doge_scrutiny_score"].mean()
     overall_value = contracts["value"].mean()
@@ -198,18 +199,18 @@ def run_experiment(contracts: pd.DataFrame) -> dict:
         dl_only = dl_set - cl_set
 
         # Overlap metrics
-        j = jaccard(cl_set, dl_set)
-        o5 = overlap_at_k(cl_ids, dl_ids, 5)
-        o10 = overlap_at_k(cl_ids, dl_ids, 10)
-        o20 = overlap_at_k(cl_ids, dl_ids, 20)
-        rd = rank_displacement(cl_ids, dl_ids)
+        jacc = jaccard(cl_set, dl_set)
+        ovlp5 = overlap_at_k(cl_ids, dl_ids, 5)
+        ovlp10 = overlap_at_k(cl_ids, dl_ids, 10)
+        ovlp20 = overlap_at_k(cl_ids, dl_ids, 20)
+        rank_disp = rank_displacement(cl_ids, dl_ids)
 
         print(f"\n  Overlap:")
-        print(f"    Jaccard (top-{TOP_N}):    {j:.3f}")
-        print(f"    Overlap@5:              {o5:.3f}")
-        print(f"    Overlap@10:             {o10:.3f}")
-        print(f"    Overlap@20:             {o20:.3f}")
-        print(f"    Mean rank displacement: {rd:.1f}")
+        print(f"    Jaccard (top-{TOP_N}):    {jacc:.3f}")
+        print(f"    Overlap@5:              {ovlp5:.3f}")
+        print(f"    Overlap@10:             {ovlp10:.3f}")
+        print(f"    Overlap@20:             {ovlp20:.3f}")
+        print(f"    Mean rank displacement: {rank_disp:.1f}")
         print(f"    Shared: {len(shared)}  |  Classical-only: {len(cl_only)}  |  DL-only: {len(dl_only)}")
 
         # Characterize unique contracts
@@ -242,11 +243,11 @@ def run_experiment(contracts: pd.DataFrame) -> dict:
 
         all_results.append({
             "persona": name,
-            "jaccard": j,
-            "overlap@5": o5,
-            "overlap@10": o10,
-            "overlap@20": o20,
-            "rank_displacement": rd,
+            "jaccard": jacc,
+            "overlap@5": ovlp5,
+            "overlap@10": ovlp10,
+            "overlap@20": ovlp20,
+            "rank_displacement": rank_disp,
             "shared": len(shared),
             "classical_only": len(cl_only),
             "dl_only": len(dl_only),

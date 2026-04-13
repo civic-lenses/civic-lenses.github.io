@@ -55,6 +55,7 @@ def _py_files() -> list[str]:
 # ------------------------------------------------------------------
 
 def collect() -> dict:
+    """Scan the repo and return evidence dict for all mechanically verifiable checklist items."""
     py = _py_files()
     readme = (ROOT / "README.md").read_text() if _exists("README.md") else ""
 
@@ -173,7 +174,7 @@ STRUCTURE_ITEMS: dict[str, str] = {
 
 
 def update_checklist(evidence: dict) -> list[str]:
-    """Update checklist markdown. Returns list of changes made."""
+    """Apply evidence to REQUIREMENTS_CHECKLIST.md, toggling items from unchecked to checked."""
     text = CHECKLIST_PATH.read_text()
     changes: list[str] = []
 
@@ -238,7 +239,7 @@ def update_checklist(evidence: dict) -> list[str]:
 
 
 def _update_summary(text: str) -> str:
-    """Recount checked items per section and update the summary table."""
+    """Recount checked items per section and rewrite the summary table row counts."""
     # Count by item ID prefixes rather than section boundaries
     sections = {
         "Modeling":           (["M"],    7),

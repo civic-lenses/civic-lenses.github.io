@@ -11,6 +11,7 @@ import sys
 
 
 def main():
+    """Run naive baseline, classical, and deep learning training scripts in sequence."""
     scripts = [
         "scripts/naive_baseline.py",
         "scripts/classical.py",

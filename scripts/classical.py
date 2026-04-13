@@ -1,4 +1,6 @@
 # AI-assisted (Claude Code, claude.ai) — https://claude.ai
+# External libraries: scikit-learn (TfidfVectorizer, cosine_similarity)
+#   https://scikit-learn.org — BSD-3-Clause license
 """
 Classical ML Model: TF-IDF + Cosine Similarity Recommender
 ===========================================================

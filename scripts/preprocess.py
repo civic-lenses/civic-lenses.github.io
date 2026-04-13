@@ -105,6 +105,7 @@ JARGON_WORDS = {
 # ===========================================================================
 
 def load_raw() -> dict[str, pd.DataFrame]:
+    """Load all raw CSV files from data/raw/, returning a dict keyed by source name."""
     dfs = {}
     for name, path in RAW_FILES.items():
         if not os.path.exists(path):
@@ -208,9 +209,10 @@ def assign_topic(agency: str, description: str) -> str:
 
 
 def add_topics(df: pd.DataFrame) -> pd.DataFrame:
+    """Assign a topic category to each item based on agency and description keywords."""
     df = df.copy()
     df["topic"] = df.apply(
-        lambda r: assign_topic(r["agency"], r["description"]), axis=1
+        lambda row: assign_topic(row["agency"], row["description"]), axis=1
     )
     return df
 
@@ -313,7 +315,7 @@ def compute_gdelt_scores(gdelt: pd.DataFrame, decay_rate: float = 0.01) -> dict:
         (now - df["seendate_parsed"]).dt.total_seconds() / 3600
     ).clip(lower=0)
     df["recency_weight"] = df["hours_ago"].apply(
-        lambda h: math.exp(-decay_rate * h)
+        lambda hours: math.exp(-decay_rate * hours)
     )
 
     grouped = df.groupby("topic").agg(
@@ -377,7 +379,7 @@ def transparency_score(description: str) -> float:
     length_score = min(word_count / 50.0, 1.0)
 
     # Jargon penalty: each jargon word reduces score
-    jargon_count = sum(1 for w in words if w in JARGON_WORDS)
+    jargon_count = sum(1 for word in words if word in JARGON_WORDS)
     jargon_penalty = min(jargon_count / max(word_count, 1) * 5, 0.5)
 
     # Specificity bonus: numbers, dollar amounts, dates
@@ -389,6 +391,7 @@ def transparency_score(description: str) -> float:
 
 
 def add_transparency(df: pd.DataFrame) -> pd.DataFrame:
+    """Compute description_length and transparency_score for each item."""
     df = df.copy()
     df["description_length"] = df["description"].str.len().fillna(0).astype(int)
     df["transparency_score"] = df["description"].apply(transparency_score)
@@ -495,6 +498,7 @@ def run_pipeline() -> pd.DataFrame:
 # ===========================================================================
 
 def print_summary(df: pd.DataFrame) -> None:
+    """Print dataset statistics: item types, topics, agencies, and score distributions."""
     print(f"\n{'='*55}")
     print(f"  Unified contract dataset: {len(df):,} items")
     print(f"{'='*55}")
