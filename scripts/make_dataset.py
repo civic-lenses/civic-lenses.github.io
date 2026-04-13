@@ -107,6 +107,7 @@ SOURCES = {
 
 
 def main() -> None:
+    """Parse CLI args and fetch raw data from selected sources."""
     parser = argparse.ArgumentParser(description="Pull raw data from all sources.")
     parser.add_argument(
         "--sources",

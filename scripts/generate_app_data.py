@@ -190,7 +190,7 @@ def main():
 
     size_kb = os.path.getsize(out_path) / 1024
     print(f"Wrote {out_path} ({size_kb:.0f} KB)")
-    print(f"Topics: {len(topics)}, Contracts per topic: 100")
+    print(f"Topics: {len(topics)}, Contracts per topic: 20")
 
 
 if __name__ == "__main__":

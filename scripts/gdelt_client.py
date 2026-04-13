@@ -147,15 +147,15 @@ class GDELTClient:
         kwargs.pop("timespan", None)
 
         frames = []
-        for q in queries:
+        for query in queries:
             df = self.search_articles(
-                q,
+                query,
                 start_date=start_date,
                 end_date=end_date,
                 **kwargs,
             )
             if not df.empty:
-                df["query"] = q
+                df["query"] = query
                 frames.append(df)
             time.sleep(delay)
 

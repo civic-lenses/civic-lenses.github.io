@@ -1,4 +1,8 @@
 # AI-assisted (Claude Code, claude.ai) — https://claude.ai
+# External libraries:
+#   PyTorch (torch, torch.nn) — https://pytorch.org — BSD-3-Clause license
+#   Sentence Transformers (all-MiniLM-L6-v2) — https://sbert.net — Apache-2.0 license
+#   scikit-learn (StandardScaler) — https://scikit-learn.org — BSD-3-Clause license
 """
 Deep Learning Model: Hybrid Neural Ranker v3
 =============================================
@@ -675,12 +679,9 @@ class HybridNeuralRecommender:
                 torch.tensor(feats_scaled, dtype=torch.float32, device=self.device)
             ).cpu().numpy()
 
-        from sklearn.preprocessing import MinMaxScaler
-        if len(scores) > 1:
-            scores = MinMaxScaler().fit_transform(scores.reshape(-1, 1)).flatten()
-
-        df["relevance_score"] = scores
-        df["final_score"] = scores
+        flat_scores = scores.flatten()
+        df["relevance_score"] = flat_scores
+        df["final_score"] = flat_scores
         df = df.sort_values("final_score", ascending=False).head(top_n)
 
         # Annotations
@@ -710,7 +711,7 @@ class HybridNeuralRecommender:
         relevant_topics: list[str],
         k_values: Optional[list[int]] = None,
     ) -> dict:
-        """Compute precision@k, topic coverage, and mean score."""
+        """Compute precision@k, topic coverage, and mean score at multiple k cutoffs."""
         if k_values is None:
             k_values = [5, 10, 20]
         metrics: dict[str, float] = {}
@@ -732,7 +733,7 @@ class HybridNeuralRecommender:
     # ------------------------------------------------------------------
 
     def save_artifacts(self, path: Optional[str] = None) -> str:
-        """Persist everything needed for inference without retraining."""
+        """Save embeddings, ranker weights, scaler, and metadata to disk for inference."""
         if not self._trained:
             raise RuntimeError("Train the model before saving")
         d = path or MODELS_DIR
@@ -759,7 +760,7 @@ class HybridNeuralRecommender:
         path: Optional[str] = None,
         contracts: Optional[pd.DataFrame] = None,
     ) -> "HybridNeuralRecommender":
-        """Load previously saved artifacts for inference."""
+        """Load saved embeddings, ranker weights, and scaler for inference without retraining."""
         d = path or MODELS_DIR
         self._embeddings = np.load(os.path.join(d, "embeddings.npy"))
         self.ranker.load_state_dict(

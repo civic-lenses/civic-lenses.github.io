@@ -105,10 +105,10 @@ Format: NeurIPS/ICML-style paper, white paper, or technical report. *(Diya — O
 
 - [x] **CQ1** 🤖 — All code modularized into classes/functions (no loose executable code)
 - [x] **CQ2** 🤖 — No executable code outside `if __name__ == "__main__"` guards
-- [ ] **CQ3** 👤 — Descriptive variable names throughout
-- [ ] **CQ4** 👤 — Docstrings on all public functions
+- [x] **CQ3** 👤 — Descriptive variable names throughout
+- [x] **CQ4** 👤 — Docstrings on all public functions
 - [x] **CQ5** 🤖 — **AI usage attributed** at top of each file that used AI assistance (link to source required)
-- [ ] **CQ6** 👤 — External code/libraries attributed at top of relevant files
+- [x] **CQ6** 👤 — External code/libraries attributed at top of relevant files
 
 > Note: Jupyter notebooks are allowed **only** in `notebooks/` and will not be graded directly.
 
@@ -116,7 +116,7 @@ Format: NeurIPS/ICML-style paper, white paper, or technical report. *(Diya — O
 
 - [x] **GIT1** 🤖 — Feature branches in use
 - [x] **GIT2** 🤖 — PR template in `.github/PULL_REQUEST_TEMPLATE/`
-- [ ] **GIT3** 👤 — All code merged via PRs (no direct commits to `main`) — enforced by branch protection
+- [x] **GIT3** 👤 — All code merged via PRs (no direct commits to `main`) — enforced by branch protection
 - [x] **GIT4** 🤖 — Every PR has a meaningful Summary — enforced by `PR Summary` CI check
 - [ ] **GIT5** 👤 — Every PR reviewed with **substantive comments** — CODEOWNER approval required
 - [x] **GIT6** 🤖 — `.env` is **never** committed (check `.gitignore`) — enforced by `Secret Scan` CI check
@@ -133,15 +133,15 @@ Format: NeurIPS/ICML-style paper, white paper, or technical report. *(Diya — O
 
 Run through this before final submission:
 
-- [ ] 👤 FS1: `python setup.py` runs end-to-end without errors
-- [ ] 👤 FS2: `python scripts/build_features.py` produces processed data
-- [ ] 👤 FS3: `python scripts/model.py` trains all three models and writes artifacts to `models/`
-- [ ] 👤 FS4: App launches and is reachable in browser
-- [ ] 👤 FS5: Live deployment URL is working and accessible without login
-- [ ] 👤 FS6: README deployment link updated to actual URL
+- [x] 👤 FS1: `python setup.py` runs end-to-end without errors
+- [x] 👤 FS2: `python scripts/build_features.py` produces processed data
+- [x] 👤 FS3: `python scripts/model.py` trains all three models and writes artifacts to `models/`
+- [x] 👤 FS4: App launches and is reachable in browser
+- [x] 👤 FS5: Live deployment URL is working and accessible without login
+- [x] 👤 FS6: README deployment link updated to actual URL
 - [ ] 👤 FS7: Written report submitted in the required format
 - [ ] 👤 FS8: Pitch deck/slides prepared
-- [ ] 👤 FS9: Repo is public (or access granted to grader)
+- [x] 👤 FS9: Repo is public (or access granted to grader)
 
 ---
 
@@ -154,8 +154,8 @@ Run through this before final submission:
 | App | 5 | 5 | 100% |
 | Written Report | 17 | 17 | 100% |
 | Pitch | 5 | 5 | 100% |
-| Repo / Code Quality | 17 | 18 | 94% |
+| Repo / Code Quality | 18 | 18 | 100% |
 | Git Best Practices | 5 | 7 | 71% |
-| **Total** | **64** | **65** | **98%** |
+| **Total** | **63** | **65** | **97%** |
 
 > Last updated: 2026-04-13
