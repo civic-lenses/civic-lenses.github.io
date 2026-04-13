@@ -79,7 +79,29 @@ def main():
                 "location": clean(row.get("location"), ""),
             }
 
-    # Per-topic recommendations
+    # All contracts (full dataset, compact format)
+    all_contracts = []
+    for _, row in df.iterrows():
+        cid = clean(row.get("contract_id"))
+        extra = enriched_cols.get(cid, {})
+        all_contracts.append({
+            "contract_id": cid,
+            "agency": clean(row.get("agency"), "Unknown Agency")[:50],
+            "vendor": clean(row.get("vendor_recipient"), "Unknown Vendor")[:50],
+            "description": _strip_html(clean(row.get("description"), "No description available"))[:150],
+            "topic": clean(row.get("topic"), "general_spending"),
+            "value": float(row.get("value", 0)),
+            "savings": float(row.get("savings", 0)),
+            "scrutiny": round(float(row.get("doge_scrutiny_score", 0)), 2),
+            "transparency": round(float(row.get("transparency_score", 0)), 2),
+            "deleted_date": extra.get("deleted_date", ""),
+            "state": extra.get("state", ""),
+            "flags": [],
+            "reason": "",
+        })
+    app_data["contracts"] = all_contracts
+
+    # Per-topic recommendations (top 20 with full details including flags/reason)
     for topic in topics:
         recs = model.recommend([topic], top_n=20, alpha=0.7)
         records = []
@@ -168,7 +190,7 @@ def main():
 
     size_kb = os.path.getsize(out_path) / 1024
     print(f"Wrote {out_path} ({size_kb:.0f} KB)")
-    print(f"Topics: {len(topics)}, Contracts per topic: 20")
+    print(f"Topics: {len(topics)}, Contracts per topic: 100")
 
 
 if __name__ == "__main__":
