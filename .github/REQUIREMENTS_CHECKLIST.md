@@ -156,6 +156,6 @@ Run through this before final submission:
 | Pitch | 5 | 5 | 100% |
 | Repo / Code Quality | 18 | 18 | 100% |
 | Git Best Practices | 5 | 7 | 71% |
-| **Total** | **65** | **65** | **100%** |
+| **Total** | **63** | **65** | **97%** |
 
 > Last updated: 2026-04-13
