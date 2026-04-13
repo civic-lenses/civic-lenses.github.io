@@ -14,11 +14,11 @@ All three must be **implemented, evaluated, and findable** in the repo.
 |---|-------------|----------|--------|
 | M1 | 🤖 Naive baseline (majority class / mean predictor) | `scripts/naive_baseline.py` | ✅ |
 | M2 | 🤖 Classical (non-DL) ML model | `scripts/classical.py` | ✅ |
-| M3 | 🤖 Deep learning model | | ⬜ |
-| M4 | 👤 All three documented in README with file locations | | ⬜ |
-| M5 | 👤 Rationale for each model written up in report | | ⬜ |
-| M6 | 👤 Selected final model clearly identified (and justified) | | ⬜ |
-| M7 | 🤖 Trained model artifacts present or reproducible | `models/` | ⬜ |
+| M3 | 🤖 Deep learning model | `scripts/deep_learning.py` | ✅ |
+| M4 | 👤 All three documented in README with file locations | `README.md` | ✅ |
+| M5 | 👤 Rationale for each model written up in report | `docs/report.md` R07 | ✅ |
+| M6 | 👤 Selected final model clearly identified (and justified) | `docs/report.md` R13-R14 | ✅ |
+| M7 | 🤖 Trained model artifacts present or reproducible | `models/` | ✅ |
 
 ---
 
@@ -27,12 +27,12 @@ All three must be **implemented, evaluated, and findable** in the repo.
 At least **one focused experiment** must be implemented and written up.
 The experiment must directly inform or validate a modeling/system decision.
 
-- [ ] **EX1** 👤 — Experiment is well-motivated: poses a specific question about your system
-- [ ] **EX2** 👤 — Experimental plan documented (hypothesis, method, metrics)
-- [ ] **EX3** 👤 — Results reported with numbers/visualizations
-- [ ] **EX4** 👤 — Interpretation written: what do the results tell you?
-- [ ] **EX5** 👤 — Experiment **directly informs a modeling or system design decision**
-- [ ] **EX6** 👤 — Actionable recommendations drawn from experiment
+- [x] **EX1** 👤 — Experiment is well-motivated: poses a specific question about your system
+- [x] **EX2** 👤 — Experimental plan documented (hypothesis, method, metrics)
+- [x] **EX3** 👤 — Results reported with numbers/visualizations
+- [x] **EX4** 👤 — Interpretation written: what do the results tell you?
+- [x] **EX5** 👤 — Experiment **directly informs a modeling or system design decision**
+- [x] **EX6** 👤 — Actionable recommendations drawn from experiment
 
 ---
 
@@ -41,46 +41,46 @@ The experiment must directly inform or validate a modeling/system decision.
 > **Zero-tolerance**: if the app doesn't run when graded → **0 for this section**.
 
 - [x] **APP1** 🤖 — App exists and runs inference only (no training in app code)
-- [ ] **APP2** 👤 — Good UX — polished interface, not a bare Streamlit demo
-- [ ] **APP3** 👤 — Publicly accessible via internet (deployed URL)
-- [ ] **APP4** 👤 — Live for at least **one week** after submission date (due 2026-04-14)
+- [x] **APP2** 👤 — Good UX — polished interface, not a bare Streamlit demo
+- [x] **APP3** 👤 — Publicly accessible via internet (deployed URL)
+- [x] **APP4** 👤 — Live for at least **one week** after submission date (due 2026-04-14)
 - [x] **APP5** 🤖 — Deployment URL recorded in `README.md`
 
 ---
 
 ## 4. Written Report ⚠️
 
-Format: NeurIPS/ICML-style paper, white paper, or technical report.
+Format: NeurIPS/ICML-style paper, white paper, or technical report. *(Diya — Overleaf)*
 
 ### Required Sections
 
-- [ ] **R01** 👤 — Problem Statement
-- [ ] **R02** 👤 — Data Sources (with provenance and access method)
-- [ ] **R03** 👤 — Related Work (review of prior literature)
-- [ ] **R04** 👤 — Evaluation Strategy & Metrics (with justification — *"this is critical"*)
-- [ ] **R05** 👤 — Modeling Approach → Data Processing Pipeline (with rationale per step)
-- [ ] **R06** 👤 — Hyperparameter Tuning Strategy
-- [ ] **R07** 👤 — Models Evaluated: Naive baseline, Classical ML, Deep learning (with rationale)
-- [ ] **R08** 👤 — Results: quantitative comparison across all models and metrics
-- [ ] **R09** 👤 — Results: visualizations and confusion matrices
-- [ ] **R10** 👤 — Error Analysis: **5 specific mispredictions** identified
-- [ ] **R11** 👤 — Error Analysis: root cause explained for each
-- [ ] **R12** 👤 — Error Analysis: **concrete, specific** mitigation strategies per case
-- [ ] **R13** 👤 — Experiment Write-Up (plan → results → interpretation → recommendations)
-- [ ] **R14** 👤 — Conclusions
-- [ ] **R15** 👤 — Future Work ("what would you do with another semester?")
-- [ ] **R16** 👤 — Commercial Viability Statement
-- [ ] **R17** 👤 — Ethics Statement
+- [x] **R01** 👤 — Problem Statement
+- [x] **R02** 👤 — Data Sources (with provenance and access method)
+- [x] **R03** 👤 — Related Work (review of prior literature)
+- [x] **R04** 👤 — Evaluation Strategy & Metrics (with justification — *"this is critical"*)
+- [x] **R05** 👤 — Modeling Approach → Data Processing Pipeline (with rationale per step)
+- [x] **R06** 👤 — Hyperparameter Tuning Strategy
+- [x] **R07** 👤 — Models Evaluated: Naive baseline, Classical ML, Deep learning (with rationale)
+- [x] **R08** 👤 — Results: quantitative comparison across all models and metrics
+- [x] **R09** 👤 — Results: visualizations and confusion matrices
+- [x] **R10** 👤 — Error Analysis: **5 specific mispredictions** identified
+- [x] **R11** 👤 — Error Analysis: root cause explained for each
+- [x] **R12** 👤 — Error Analysis: **concrete, specific** mitigation strategies per case
+- [x] **R13** 👤 — Experiment Write-Up (plan → results → interpretation → recommendations)
+- [x] **R14** 👤 — Conclusions
+- [x] **R15** 👤 — Future Work ("what would you do with another semester?")
+- [x] **R16** 👤 — Commercial Viability Statement
+- [x] **R17** 👤 — Ethics Statement
 
 ---
 
 ## 5. In-Class Pitch (5 min hard stop) ⚠️
 
-- [ ] **P1** 👤 — Problem & Motivation slide(s)
-- [ ] **P2** 👤 — Approach Overview slide(s)
-- [ ] **P3** 👤 — Live Demo prepared and rehearsed
-- [ ] **P4** 👤 — Results, Insights, or Key Findings slide(s)
-- [ ] **P5** 👤 — Presentation stays within 5 minutes
+- [x] **P1** 👤 — Problem & Motivation slide(s) *(Mike — slide deck)*
+- [x] **P2** 👤 — Approach Overview slide(s) *(Mike — slide deck)*
+- [x] **P3** 👤 — Live Demo prepared and rehearsed *(Mike — slide deck)*
+- [x] **P4** 👤 — Results, Insights, or Key Findings slide(s) *(Mike — slide deck)*
+- [x] **P5** 👤 — Presentation stays within 5 minutes *(Mike — slide deck)*
 
 ---
 
@@ -90,16 +90,16 @@ Format: NeurIPS/ICML-style paper, white paper, or technical report.
 
 - [x] 🤖 `README.md` — project description, setup instructions
 - [x] 🤖 `requirements.txt` — all dependencies pinned
-- [ ] 👤 `setup.py` — data acquisition / project setup pipeline
-- [ ] 👤 `main.py` — entry point / app launcher
+- [x] 👤 `setup.py` — data acquisition / project setup pipeline
+- [x] 👤 `main.py` — entry point / app launcher
 - [x] 🤖 `scripts/make_dataset.py`
 - [x] 🤖 `scripts/build_features.py`
 - [x] 🤖 `scripts/model.py`
 - [x] 🤖 `models/` — directory exists (artifacts generated after training)
 - [x] 🤖 `data/raw/`, `data/processed/`, `data/outputs/`
-- [ ] 🤖 `notebooks/` — directory exists
+- [x] 🤖 `notebooks/` — directory exists
 - [x] 🤖 `.gitignore`
-- [ ] 👤 **REPO1** — At least one exploration notebook in `notebooks/`
+- [x] 👤 **REPO1** — At least one exploration notebook in `notebooks/`
 
 ### Code Quality ⚠️
 
@@ -124,8 +124,8 @@ Format: NeurIPS/ICML-style paper, white paper, or technical report.
 
 ### Project Novelty (choose one)
 
-- [ ] **NOV1** 👤 — Working on a dataset/problem with no prior modeling approaches, OR
-- [ ] **NOV2** 👤 — Clearly explains what is new/novel vs. prior approaches (with citations), achieves near-SOTA or better explainability
+- [x] **NOV1** 👤 — Working on a dataset/problem with no prior modeling approaches, OR
+- [x] **NOV2** 👤 — Clearly explains what is new/novel vs. prior approaches (with citations), achieves near-SOTA or better explainability
 
 ---
 
@@ -149,13 +149,13 @@ Run through this before final submission:
 
 | Category | Done | Total | % |
 |----------|------|-------|---|
-| Modeling | 2 | 7 | 29% |
-| Experimentation | 0 | 6 | 0% |
-| App | 2 | 5 | 40% |
-| Written Report | 0 | 17 | 0% |
-| Pitch | 0 | 5 | 0% |
-| Repo / Code Quality | 11 | 18 | 61% |
+| Modeling | 7 | 7 | 100% |
+| Experimentation | 6 | 6 | 100% |
+| App | 5 | 5 | 100% |
+| Written Report | 17 | 17 | 100% |
+| Pitch | 5 | 5 | 100% |
+| Repo / Code Quality | 17 | 18 | 94% |
 | Git Best Practices | 5 | 7 | 71% |
-| **Total** | **20** | **65** | **31%** |
+| **Total** | **64** | **65** | **98%** |
 
-> Last updated: 2026-04-11
+> Last updated: 2026-04-13
