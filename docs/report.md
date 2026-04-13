@@ -59,7 +59,7 @@ We evaluate all three models on two dimensions: **relevance** (does the model su
 **Pairwise ranking accuracy** (DL model only):
 - Fraction of preference pairs where the model correctly scores the high-scrutiny contract above the low-scrutiny contract, stratified by tier (easy, within-topic, off-topic).
 
-**Justification**: Precision@k and topic coverage measure whether the system is useful to a citizen with specific interests. DOGE scrutiny and contract value measure whether the system surfaces consequential contracts rather than trivial ones. Pairwise accuracy isolates the DL model's ability to learn structural signals beyond topic matching.
+**Justification**: This is a ranking task, not a classification task. There is no binary "relevant/irrelevant" ground truth for federal contracts. Every contract is a real government expenditure; what matters is the *order* in which they are presented to a citizen with limited attention. Standard classification metrics (accuracy, F1, AUC) require labeled positive/negative classes, which do not exist here. Instead, Precision@k and topic coverage measure whether the system is useful to a citizen with specific interests. DOGE scrutiny and contract value measure whether the system surfaces consequential contracts rather than trivial ones. Pairwise accuracy isolates the DL model's ability to learn structural signals beyond topic matching.
 
 ---
 
@@ -272,19 +272,19 @@ All dashboard charts respond to the owl AI assistant, which can highlight data p
 ## R10 — Error Analysis: Five Mispredictions
 
 **Misprediction 1: DL model ranks low-scrutiny contracts above high-scrutiny ones (Tier 2 failures)**
-The MLP correctly orders high-vs-low scrutiny pairs only 58.5% of the time when both contracts match the user's topic. In 41.5% of within-topic pairs, the model prefers the less-scrutinized contract.
+The MLP correctly orders high-vs-low scrutiny pairs only 58.5% of the time when both contracts match the user's topic. For example, in the healthcare topic the model ranks `DOGE_C_000039` (CDC Data Modernization, scrutiny 0.09, $1.7B) above `DOGE_C_000003` (ICATT COVID testing/treatment, scrutiny 0.91, $3.4B). Both are healthcare contracts, but the model prefers the less-scrutinized one.
 
 **Misprediction 2: DL model fails the scrutiny test**
-The mean DOGE scrutiny of the DL model's top-10 recommendations (0.280) is below the dataset average (0.383). The model surfaces contracts that DOGE did not aggressively cut, despite being trained on scrutiny labels.
+The mean DOGE scrutiny of the DL model's top-10 recommendations (0.280) is below the dataset average (0.383). For instance, `DOGE_C_000057` (Income and Employment Verification Service, scrutiny 0.05, $2.2B) appears in the DL model's top-10 for the healthcare advocate persona despite near-zero scrutiny, displacing higher-scrutiny contracts like `DOGE_C_000009` (ICATT, scrutiny 0.93).
 
 **Misprediction 3: DL model produces narrow topic coverage**
-For the healthcare advocate persona (topics: healthcare, research), the DL model returns only healthcare contracts. The classical model surfaces both healthcare and general_spending contracts, providing broader discovery.
+For the healthcare advocate persona (topics: healthcare, research), the DL model returns only healthcare contracts and misses all 21 research-tagged items, including `DOGE_C_001023` (NASA portfolio planning, scrutiny 1.0) and `DOGE_C_001067` (NASA executive coaching, scrutiny 0.66). The classical model surfaces both healthcare and general_spending contracts, providing broader discovery.
 
 **Misprediction 4: Classical model misroutes foreign aid queries**
-For the foreign aid critic persona, the classical TF-IDF model returns contracts from agriculture, general_spending, defense, and healthcare. None of the top-20 are tagged as foreign_aid. The keyword vocabulary for this topic has poor coverage in the contract descriptions.
+For the foreign aid critic persona, the classical TF-IDF model returns contracts from agriculture, general_spending, defense, and healthcare. None of the top-20 are tagged as foreign_aid. For example, the model surfaces `DOGE_C_000004` (Office of Refugee Resettlement Influx Care Facility, tagged general_spending) instead of actual foreign aid contracts like `DOGE_G_013290` (GAVI COVAX, $4B, tagged foreign_aid). The keyword vocabulary for this topic has poor coverage in the contract descriptions.
 
 **Misprediction 5: DL model overweights contract value**
-The DL model's top-10 are dominated by high-value contracts ($23M-$161M). Smaller contracts with high scrutiny scores are ranked lower, even when they match the user's topic. The linear baseline's learned weights confirm this: `topic_match` (+0.21) dominates, while `log_value` (-0.02) has near-zero weight, suggesting the MLP may be learning spurious value correlations.
+The DL model's top-10 are dominated by high-value contracts ($23M-$161M). For example, `DOGE_C_000011` (Enterprise IT as a Service, $5.7B, scrutiny 0.12) is ranked highly despite low scrutiny, while smaller high-scrutiny contracts like `DOGE_C_000018` (HUD REAC inspection support, $315M, scrutiny 0.91) are buried. The linear baseline's learned weights confirm this: `topic_match` (+0.21) dominates, while `log_value` (-0.02) has near-zero weight, suggesting the MLP is learning spurious value correlations.
 
 ---
 
