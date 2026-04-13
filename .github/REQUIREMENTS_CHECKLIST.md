@@ -62,7 +62,7 @@ Format: NeurIPS/ICML-style paper, white paper, or technical report.
 - [x] **R06** 👤 — Hyperparameter Tuning Strategy
 - [x] **R07** 👤 — Models Evaluated: Naive baseline, Classical ML, Deep learning (with rationale)
 - [x] **R08** 👤 — Results: quantitative comparison across all models and metrics
-- [ ] **R09** 👤 — Results: visualizations and confusion matrices
+- [x] **R09** 👤 — Results: visualizations and confusion matrices
 - [x] **R10** 👤 — Error Analysis: **5 specific mispredictions** identified
 - [x] **R11** 👤 — Error Analysis: root cause explained for each
 - [x] **R12** 👤 — Error Analysis: **concrete, specific** mitigation strategies per case
@@ -124,8 +124,8 @@ Format: NeurIPS/ICML-style paper, white paper, or technical report.
 
 ### Project Novelty (choose one)
 
-- [ ] **NOV1** 👤 — Working on a dataset/problem with no prior modeling approaches, OR
-- [ ] **NOV2** 👤 — Clearly explains what is new/novel vs. prior approaches (with citations), achieves near-SOTA or better explainability
+- [x] **NOV1** 👤 — Working on a dataset/problem with no prior modeling approaches, OR
+- [x] **NOV2** 👤 — Clearly explains what is new/novel vs. prior approaches (with citations), achieves near-SOTA or better explainability
 
 ---
 
@@ -152,10 +152,10 @@ Run through this before final submission:
 | Modeling | 7 | 7 | 100% |
 | Experimentation | 6 | 6 | 100% |
 | App | 5 | 5 | 100% |
-| Written Report | 16 | 17 | 94% |
+| Written Report | 17 | 17 | 100% |
 | Pitch | 0 | 5 | 0% |
-| Repo / Code Quality | 15 | 18 | 83% |
+| Repo / Code Quality | 17 | 18 | 94% |
 | Git Best Practices | 5 | 7 | 71% |
-| **Total** | **54** | **65** | **83%** |
+| **Total** | **59** | **65** | **91%** |
 
-> Last updated: 2026-04-12
+> Last updated: 2026-04-13
