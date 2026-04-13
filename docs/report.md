@@ -212,12 +212,60 @@ The DL model achieves perfect precision (all top-10 match user topics) but surfa
 
 ## R09 — Results: Visualizations
 
-<!-- TODO: Generate and embed visualizations. Suggested:
-1. Bar chart: Mean DOGE scrutiny by model (Classical vs DL vs Dataset baseline)
-2. Bar chart: Mean contract value by model
-3. Grouped bar chart: MLP vs Linear accuracy across Tier 1/2/3
-4. Per-persona Jaccard similarity heatmap or bar chart
--->
+### V1. Cross-model comparison: scrutiny and value
+
+| Model | Mean DOGE Scrutiny | Mean Contract Value |
+|-------|--------------------|---------------------|
+| Classical (TF-IDF) | 0.703 | $54,754,434 |
+| Deep Learning (MLP) | 0.399 | $86,879,386 |
+| Dataset Baseline | 0.383 | $9,622,308 |
+
+The classical model surfaces contracts with 1.8x higher scrutiny than the DL model, while the DL model surfaces contracts with 1.6x higher dollar value. Both models exceed the dataset baseline by an order of magnitude on value, but only the classical model meaningfully exceeds the baseline on scrutiny.
+
+### V2. Pairwise ranking accuracy: MLP vs Linear baseline
+
+| Tier | MLP | Linear | Gap |
+|------|-----|--------|-----|
+| 1 (Easy pairs) | 0.998 | 1.000 | -0.002 |
+| 2 (Within-topic) | 0.585 | 0.712 | -0.127 |
+| 3 (Off-topic) | 0.584 | 0.695 | -0.111 |
+| Overall | 0.722 | 0.811 | -0.089 |
+
+Both models solve Tier 1 near-perfectly. The linear baseline holds an 11-13 percentage point advantage on Tiers 2 and 3. The MLP's nonlinear capacity does not help; it hurts due to overfitting.
+
+### V3. Per-persona model overlap (Jaccard similarity, top-20)
+
+| Persona | Topics | Jaccard |
+|---------|--------|---------|
+| Healthcare advocate | healthcare, research | 0.000 |
+| Defense watcher | defense, gov. efficiency | 0.081 |
+| Foreign aid critic | foreign_aid, general_spending | 0.000 |
+| Education advocate | education, infrastructure | 0.000 |
+| Fiscal accountability | gov. efficiency, finance | 0.163 |
+
+Three of five personas have zero overlap between model outputs. The models produce almost entirely disjoint recommendation lists.
+
+### V4. DL model top-10 quality
+
+| Metric | DL Model | Dataset Baseline |
+|--------|----------|------------------|
+| Precision@5 | 1.000 | — |
+| Precision@10 | 1.000 | — |
+| Topic coverage@10 | 1.000 | — |
+| Mean scrutiny (top-10) | 0.280 | 0.383 |
+
+Perfect topic precision but below-baseline scrutiny. The DL model retrieves the right topics but ranks by value and description structure rather than public-interest signal.
+
+### V5-V8. Dashboard visualizations (interactive)
+
+The deployed application at civic-lenses.github.io includes four interactive ECharts visualizations:
+
+- **V5. Spending by state** (horizontal bar, top 15): Total contract value by performance state. Supports drill-down filtering.
+- **V6. Topic distribution** (donut): Contract proportion across 12 categories. General spending dominates due to fallback assignment.
+- **V7. Savings timeline** (monthly bar + line): DOGE-reported savings by month with contract count overlay. Reveals concentration in specific policy windows.
+- **V8. Agency concentration** (horizontal bar, top agencies): Federal agencies ranked by total value. A small number of agencies account for the majority of spending.
+
+All dashboard charts respond to the owl AI assistant, which can highlight data points, scroll to charts, and narrate patterns conversationally.
 
 ---
 
