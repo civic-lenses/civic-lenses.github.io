@@ -50,7 +50,7 @@ The experiment must directly inform or validate a modeling/system decision.
 
 ## 4. Written Report ⚠️
 
-Format: NeurIPS/ICML-style paper, white paper, or technical report.
+Format: NeurIPS/ICML-style paper, white paper, or technical report. *(Diya — Overleaf)*
 
 ### Required Sections
 
@@ -76,11 +76,11 @@ Format: NeurIPS/ICML-style paper, white paper, or technical report.
 
 ## 5. In-Class Pitch (5 min hard stop) ⚠️
 
-- [ ] **P1** 👤 — Problem & Motivation slide(s)
-- [ ] **P2** 👤 — Approach Overview slide(s)
-- [ ] **P3** 👤 — Live Demo prepared and rehearsed
-- [ ] **P4** 👤 — Results, Insights, or Key Findings slide(s)
-- [ ] **P5** 👤 — Presentation stays within 5 minutes
+- [x] **P1** 👤 — Problem & Motivation slide(s) *(Mike — slide deck)*
+- [x] **P2** 👤 — Approach Overview slide(s) *(Mike — slide deck)*
+- [x] **P3** 👤 — Live Demo prepared and rehearsed *(Mike — slide deck)*
+- [x] **P4** 👤 — Results, Insights, or Key Findings slide(s) *(Mike — slide deck)*
+- [x] **P5** 👤 — Presentation stays within 5 minutes *(Mike — slide deck)*
 
 ---
 
@@ -153,9 +153,9 @@ Run through this before final submission:
 | Experimentation | 6 | 6 | 100% |
 | App | 5 | 5 | 100% |
 | Written Report | 17 | 17 | 100% |
-| Pitch | 0 | 5 | 0% |
+| Pitch | 5 | 5 | 100% |
 | Repo / Code Quality | 17 | 18 | 94% |
 | Git Best Practices | 5 | 7 | 71% |
-| **Total** | **59** | **65** | **91%** |
+| **Total** | **64** | **65** | **98%** |
 
 > Last updated: 2026-04-13
