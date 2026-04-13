@@ -92,7 +92,7 @@ function renderCard(contract, idx) {
   return `
     <div class="contract-card${isRecommended ? " card-recommended" : ""}">
       <div class="card-header">
-        <span class="agency-tag">${contract.agency}</span>
+        <span class="agency-tag">${esc(contract.agency)}</span>
         <span class="scrutiny-badge ${s.cls}" title="${isRecommended ? `Relevance: ${(contract.relevance * 100).toFixed(0)}% · Score: ${contract.final_score.toFixed(3)}` : s.label}">
           <span class="dot"></span>
           ${s.label}

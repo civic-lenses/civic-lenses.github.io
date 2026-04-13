@@ -10,17 +10,17 @@ import subprocess
 import sys
 
 
-def run(cmd: str) -> None:
+def run(cmd: list[str]) -> None:
     print(f"\n{'=' * 60}")
-    print(f"  {cmd}")
+    print(f"  {' '.join(cmd)}")
     print(f"{'=' * 60}\n")
-    subprocess.check_call(cmd.split(), stdout=sys.stdout, stderr=sys.stderr)
+    subprocess.check_call(cmd, stdout=sys.stdout, stderr=sys.stderr)
 
 
 if __name__ == "__main__":
-    run("python3 scripts/make_dataset.py")
-    run("python3 scripts/preprocess.py")
-    run("python3 scripts/naive_baseline.py")
-    run("python3 scripts/classical.py")
-    run("python3 scripts/deep_learning.py")
+    run([sys.executable, "scripts/make_dataset.py"])
+    run([sys.executable, "scripts/preprocess.py"])
+    run([sys.executable, "scripts/naive_baseline.py"])
+    run([sys.executable, "scripts/classical.py"])
+    run([sys.executable, "scripts/deep_learning.py"])
     print("\nSetup complete. Run 'python main.py' to launch the app.")
