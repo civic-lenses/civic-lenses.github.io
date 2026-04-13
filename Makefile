@@ -48,6 +48,7 @@ features:
 train:
 	python3 scripts/naive_baseline.py
 	python3 scripts/classical.py
+	python3 scripts/deep_learning.py
 
 run:
 	python3 main.py

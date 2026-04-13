@@ -675,6 +675,10 @@ class HybridNeuralRecommender:
                 torch.tensor(feats_scaled, dtype=torch.float32, device=self.device)
             ).cpu().numpy()
 
+        from sklearn.preprocessing import MinMaxScaler
+        if len(scores) > 1:
+            scores = MinMaxScaler().fit_transform(scores.reshape(-1, 1)).flatten()
+
         df["relevance_score"] = scores
         df["final_score"] = scores
         df = df.sort_values("final_score", ascending=False).head(top_n)
