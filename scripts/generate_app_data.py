@@ -166,7 +166,7 @@ def main():
         "total_contracts": len(df),
         "total_value": float(df["value"].sum()),
         "total_savings": float(df["savings"].sum()),
-        "flagged": int((df["doge_scrutiny_score"] >= df["doge_scrutiny_score"].quantile(0.90)).sum()),
+        "flagged": int((df["doge_scrutiny_score"] >= 0.7).sum()),
         "mean_scrutiny": round(float(df["doge_scrutiny_score"].mean()), 3),
         "topics": {
             t: int((df["topic"] == t).sum()) for t in topics
