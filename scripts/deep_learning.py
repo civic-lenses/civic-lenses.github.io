@@ -2,7 +2,7 @@
 # External libraries:
 #   PyTorch (torch, torch.nn) — https://pytorch.org — BSD-3-Clause license
 #   Sentence Transformers (all-MiniLM-L6-v2) — https://sbert.net — Apache-2.0 license
-#   scikit-learn (StandardScaler, MinMaxScaler) — https://scikit-learn.org — BSD-3-Clause license
+#   scikit-learn (StandardScaler) — https://scikit-learn.org — BSD-3-Clause license
 """
 Deep Learning Model: Hybrid Neural Ranker v3
 =============================================
@@ -679,12 +679,9 @@ class HybridNeuralRecommender:
                 torch.tensor(feats_scaled, dtype=torch.float32, device=self.device)
             ).cpu().numpy()
 
-        from sklearn.preprocessing import MinMaxScaler
-        if len(scores) > 1:
-            scores = MinMaxScaler().fit_transform(scores.reshape(-1, 1)).flatten()
-
-        df["relevance_score"] = scores
-        df["final_score"] = scores
+        flat_scores = scores.flatten()
+        df["relevance_score"] = flat_scores
+        df["final_score"] = flat_scores
         df = df.sort_values("final_score", ascending=False).head(top_n)
 
         # Annotations

@@ -42,6 +42,8 @@ All data is drawn from public government APIs. No authentication is required exc
 
 **Pairwise learning-to-rank.** Burges et al. (2005) introduce RankNet (ICML 2005, pp. 89-96), establishing that pairwise losses are effective for ranking problems where absolute relevance scores are unavailable. Burges (2010) provides an overview of the evolution from RankNet through LambdaRank to LambdaMART (Microsoft Research Technical Report MSR-TR-2010-82). Our MLP ranker uses MarginRankingLoss, a direct descendant of this pairwise formulation, training on preference pairs derived from real DOGE scrutiny scores.
 
+**What is new.** Unlike prior transparency platforms (USAspending, GovTrack) that present raw government data without ranking or personalization, Civic Lenses is the first system to unify four federal data sources (DOGE.gov, GDELT, USAspending, SAM.gov) into a single personalized recommender. The novel contribution is using real DOGE scrutiny scores as distant supervision for a pairwise neural ranker. No prior work treats government cost-cutting decisions as training signal for citizen-facing recommendations. This lets the system learn which structural features of a contract predict aggressive oversight, without requiring hand-labeled relevance judgments.
+
 ---
 
 ## R04 — Evaluation Strategy & Metrics
@@ -164,13 +166,14 @@ Train/validation split is temporal: contracts deleted Jan-Mar 2025 for training,
 
 ### Cross-model comparison (experiment across 5 user personas, top-20 per model)
 
-| Metric | Classical (TF-IDF) | Deep Learning (MLP) | Dataset Baseline |
-|--------|-------------------|--------------------|-----------------| 
-| Mean DOGE scrutiny | 0.703 | 0.399 | 0.383 |
-| Mean contract value | $54,754,434 | $86,879,386 | $9,622,308 |
-| Mean topic diversity (unique topics in top-20) | 3.2 | 1.4 | — |
+| Metric | Naive (GDELT) | Classical (TF-IDF) | Deep Learning (MLP) | Dataset Baseline |
+|--------|--------------|-------------------|--------------------|-----------------| 
+| Mean DOGE scrutiny | 0.599 | 0.703 | 0.399 | 0.383 |
+| Mean contract value | $404,908,485 | $54,754,434 | $86,879,386 | $9,622,308 |
+| Mean topic diversity (unique topics in top-20) | 1.0 | 3.2 | 1.4 | — |
+| Mean precision@20 (across 5 personas) | 0.200 | 0.740 | 0.850 | — |
 
-Both models surface contracts with substantially higher value than the dataset average ($9.6M), but the classical model surfaces higher-scrutiny contracts (0.703 vs 0.399) while the DL model surfaces higher-value contracts ($86.9M vs $54.8M).
+The naive baseline ranks all contracts by GDELT news volume with no personalization. Its top-20 contains only `general_spending` contracts (topic diversity = 1.0), which means it achieves non-zero precision only for personas whose topics include `general_spending`. Despite high scrutiny (0.599) and very high value ($405M), it fails the core task: personalized discovery. Both learned models substantially outperform it on precision and topic diversity. The classical model surfaces higher-scrutiny contracts (0.703 vs 0.399) while the DL model surfaces higher-value contracts ($86.9M vs $54.8M).
 
 ### Model overlap (averaged across 5 personas)
 
@@ -214,15 +217,20 @@ The DL model achieves perfect precision (all top-10 match user topics) but surfa
 
 ### V1. Cross-model comparison: scrutiny and value
 
+![Cross-model comparison of scrutiny and contract value across all three models and the dataset baseline](figures/fig1_model_comparison.png)
+
 | Model | Mean DOGE Scrutiny | Mean Contract Value |
 |-------|--------------------|---------------------|
+| Naive (GDELT) | 0.599 | $404,908,485 |
 | Classical (TF-IDF) | 0.703 | $54,754,434 |
 | Deep Learning (MLP) | 0.399 | $86,879,386 |
 | Dataset Baseline | 0.383 | $9,622,308 |
 
-The classical model surfaces contracts with 1.8x higher scrutiny than the DL model, while the DL model surfaces contracts with 1.6x higher dollar value. Both models exceed the dataset baseline by an order of magnitude on value, but only the classical model meaningfully exceeds the baseline on scrutiny.
+The classical model surfaces contracts with 1.8x higher scrutiny than the DL model. The naive baseline achieves high scrutiny (0.599) and very high value ($405M) but only because it selects the same 20 general_spending contracts for every user. The DL model surfaces higher-value contracts than the classical model ($86.9M vs $54.8M) but at below-baseline scrutiny.
 
 ### V2. Pairwise ranking accuracy: MLP vs Linear baseline
+
+![Pairwise ranking accuracy by tier for MLP vs Linear ranker](figures/fig2_pairwise_accuracy.png)
 
 | Tier | MLP | Linear | Gap |
 |------|-----|--------|-----|
@@ -235,6 +243,8 @@ Both models solve Tier 1 near-perfectly. The linear baseline holds an 11-13 perc
 
 ### V3. Per-persona model overlap (Jaccard similarity, top-20)
 
+![Jaccard similarity between Classical and DL model outputs by persona](figures/fig3_persona_overlap.png)
+
 | Persona | Topics | Jaccard |
 |---------|--------|---------|
 | Healthcare advocate | healthcare, research | 0.000 |
@@ -245,7 +255,13 @@ Both models solve Tier 1 near-perfectly. The linear baseline holds an 11-13 perc
 
 Three of five personas have zero overlap between model outputs. The models produce almost entirely disjoint recommendation lists.
 
-### V4. DL model top-10 quality
+### V4. Naive baseline precision by persona
+
+![Naive baseline precision@20 by persona, showing failure of unpersonalized ranking](figures/fig4_naive_precision.png)
+
+The naive baseline returns the same 20 `general_spending` contracts for every user. It achieves precision@20 = 1.0 only for the foreign aid critic (whose topics include `general_spending`) and 0.0 for all other personas. This confirms that news-volume ranking without personalization cannot serve diverse citizen interests.
+
+### V5. DL model top-10 quality
 
 | Metric | DL Model | Dataset Baseline |
 |--------|----------|------------------|
@@ -256,14 +272,14 @@ Three of five personas have zero overlap between model outputs. The models produ
 
 Perfect topic precision but below-baseline scrutiny. The DL model retrieves the right topics but ranks by value and description structure rather than public-interest signal.
 
-### V5-V8. Dashboard visualizations (interactive)
+### V6-V9. Dashboard visualizations (interactive)
 
 The deployed application at civic-lenses.github.io includes four interactive ECharts visualizations:
 
-- **V5. Spending by state** (horizontal bar, top 15): Total contract value by performance state. Supports drill-down filtering.
-- **V6. Topic distribution** (donut): Contract proportion across 12 categories. General spending dominates due to fallback assignment.
-- **V7. Savings timeline** (monthly bar + line): DOGE-reported savings by month with contract count overlay. Reveals concentration in specific policy windows.
-- **V8. Agency concentration** (horizontal bar, top agencies): Federal agencies ranked by total value. A small number of agencies account for the majority of spending.
+- **V6. Spending by state** (horizontal bar, top 15): Total contract value by performance state. Supports drill-down filtering.
+- **V7. Topic distribution** (donut): Contract proportion across 12 categories. General spending dominates due to fallback assignment.
+- **V8. Savings timeline** (monthly bar + line): DOGE-reported savings by month with contract count overlay. Reveals concentration in specific policy windows.
+- **V9. Agency concentration** (horizontal bar, top agencies): Federal agencies ranked by total value. A small number of agencies account for the majority of spending.
 
 All dashboard charts respond to the owl AI assistant, which can highlight data points, scroll to charts, and narrate patterns conversationally.
 
