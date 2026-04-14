@@ -175,6 +175,8 @@ Train/validation split is temporal: contracts deleted Jan-Mar 2025 for training,
 
 The naive baseline ranks all contracts by GDELT news volume with no personalization. Its top-20 contains only `general_spending` contracts (topic diversity = 1.0), which means it achieves non-zero precision only for personas whose topics include `general_spending`. Despite high scrutiny (0.599) and very high value ($405M), it fails the core task: personalized discovery. Both learned models substantially outperform it on precision and topic diversity. The classical model surfaces higher-scrutiny contracts (0.703 vs 0.399) while the DL model surfaces higher-value contracts ($86.9M vs $54.8M).
 
+**Reproducibility note:** The naive baseline and classical model incorporate GDELT news popularity, which uses a rolling 30-day window with exponential recency decay. Exact values will shift between runs as the news cycle changes. The qualitative ordering (classical > DL on scrutiny, naive returning only `general_spending`, near-zero model overlap) is stable across runs.
+
 ### Model overlap (averaged across 5 personas)
 
 | Metric | Value |
