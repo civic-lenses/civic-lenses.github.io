@@ -1,5 +1,6 @@
 # AIPI 540 — Civic Lenses
 
+[![Duke AIPI 540](https://img.shields.io/badge/Duke-AIPI%20540-012169)](https://masters.pratt.duke.edu/)
 [![Deploy Site](https://github.com/civic-lenses/civic-lenses.github.io/actions/workflows/deploy.yml/badge.svg)](https://github.com/civic-lenses/civic-lenses.github.io/actions/workflows/deploy.yml)
 
 A personalized federal spending recommender that helps citizens track government contracts, grants, and leases using data from GDELT, DOGE.gov, USAspending.gov, and SAM.gov.
