@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>How CivicLenses Recommends</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='12' cy='16' r='4' fill='white' stroke='%2300539B' stroke-width='2'/><circle cx='20' cy='16' r='4' fill='white' stroke='%2300539B' stroke-width='2'/><circle cx='12' cy='16' r='1.5' fill='%230f172a'/><circle cx='20' cy='16' r='1.5' fill='%230f172a'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --color-bg-page: #f4f5f7;
+  --color-bg-surface: #ffffff;
+  --color-text-primary: #1a202c;
+  --color-text-secondary: #4a5568;
+  --color-text-tertiary: #718096;
+  --color-border: #e2e8f0;
+  --color-accent: #00539B;
+  --color-accent-subtle: #e8f0f8;
+  --color-accent-hover: #003D73;
+  --color-danger: #c53030;
+  --color-warning: #b7791f;
+  --color-success: #1b7a34;
+  --color-purple: #5a67d8;
+  --color-brand-highlight: #E89923;
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.06);
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --font-display: 'Source Serif 4', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+.page {
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 500; color: var(--color-accent);
+  text-decoration: none; margin-bottom: 32px;
+}
+.back-link:hover { color: var(--color-accent-hover); }
+h1 {
+  font-family: var(--font-display);
+  font-size: 32px; font-weight: 600; line-height: 1.2;
+  margin-bottom: 6px;
+}
+.subtitle {
+  font-size: 15px; color: var(--color-text-secondary);
+  margin-bottom: 40px;
+}
+h2 {
+  font-family: var(--font-display);
+  font-size: 22px; font-weight: 600;
+  margin: 40px 0 16px; padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+}
+h2:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+p, li { font-size: 14.5px; color: var(--color-text-secondary); }
+p { margin-bottom: 12px; }
+ul { padding-left: 20px; margin-bottom: 12px; }
+li { margin-bottom: 4px; }
+.card {
+  background: var(--color-bg-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 24px; margin-bottom: 20px;
+}
+.formula {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 16px; text-align: center;
+  padding: 20px 16px; line-height: 1.8;
+  color: var(--color-text-primary);
+}
+.formula var { font-style: italic; }
+.formula .alpha { color: var(--color-accent); font-weight: 600; }
+.formula .eq { color: var(--color-text-tertiary); }
+.weight-bar-group { margin: 16px 0 8px; }
+.weight-bar-label {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12.5px; margin-bottom: 4px;
+}
+.weight-bar-label span:first-child { font-weight: 500; color: var(--color-text-primary); }
+.weight-bar-label span:last-child { color: var(--color-text-tertiary); font-size: 12px; }
+.weight-bar-track {
+  height: 10px; background: #edf2f7;
+  border-radius: 5px; overflow: hidden;
+}
+.weight-bar-fill {
+  height: 100%; border-radius: 5px;
+  transition: width 0.3s;
+}
+.stacked-bar {
+  display: flex; height: 28px; border-radius: 6px;
+  overflow: hidden; margin: 12px 0 8px;
+}
+.stacked-bar div { display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; }
+.legend {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  font-size: 12px; color: var(--color-text-secondary);
+}
+.legend-dot {
+  display: inline-block; width: 10px; height: 10px;
+  border-radius: 3px; margin-right: 4px; vertical-align: middle;
+}
+.feature-row {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 10px;
+}
+.feature-name {
+  width: 170px; text-align: right;
+  font-size: 13px; font-weight: 500; flex-shrink: 0;
+  font-family: monospace;
+}
+.feature-bar-container {
+  flex: 1; display: flex; align-items: center;
+  position: relative; height: 22px;
+}
+.feature-bar-center {
+  position: absolute; left: 50%; top: 0; bottom: 0;
+  width: 1px; background: var(--color-border);
+}
+.feature-bar {
+  position: absolute; height: 18px;
+  border-radius: 3px; top: 2px;
+}
+.feature-bar.positive { background: var(--color-accent); }
+.feature-bar.negative { background: var(--color-danger); opacity: 0.7; }
+.feature-value {
+  font-size: 12px; font-weight: 500; color: var(--color-text-secondary);
+  margin-left: 4px; white-space: nowrap;
+}
+table {
+  width: 100%; border-collapse: collapse;
+  font-size: 13.5px; margin: 12px 0;
+}
+th {
+  text-align: left; font-weight: 600; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.3px;
+  color: var(--color-text-tertiary);
+  padding: 8px 12px; border-bottom: 2px solid var(--color-border);
+}
+td {
+  padding: 8px 12px; border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+tr:last-child td { border-bottom: none; }
+.highlight { font-weight: 600; color: var(--color-text-primary); }
+.tag {
+  display: inline-block; font-size: 11px; font-weight: 600;
+  padding: 2px 8px; border-radius: 4px;
+  background: var(--color-accent-subtle); color: var(--color-accent);
+}
+.tag.warn { background: #fef3c7; color: var(--color-warning); }
+.tag.green { background: #f0fdf4; color: var(--color-success); }
+.source-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px; margin: 12px 0;
+}
+.source-item {
+  background: var(--color-bg-page); border-radius: var(--radius-md);
+  padding: 14px; text-align: center;
+}
+.source-item strong { display: block; font-size: 13px; margin-bottom: 2px; color: var(--color-text-primary); }
+.source-item span { font-size: 12px; color: var(--color-text-tertiary); }
+.ai-row {
+  display: flex; gap: 16px; margin: 12px 0;
+}
+.ai-card {
+  flex: 1; background: var(--color-bg-page);
+  border-radius: var(--radius-md); padding: 16px;
+}
+.ai-card strong { display: block; font-size: 14px; margin-bottom: 4px; color: var(--color-text-primary); }
+.ai-card span { font-size: 12.5px; color: var(--color-text-secondary); }
+@media (max-width: 600px) {
+  .page { padding: 24px 16px 60px; }
+  h1 { font-size: 26px; }
+  .feature-name { width: 120px; font-size: 11.5px; }
+  .ai-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<a href="index.html" class="back-link">
+  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg>
+  Back to dashboard
+</a>
+
+<h1>How CivicLenses Recommends</h1>
+<p class="subtitle">Model transparency and methodology</p>
+
+<!-- Scoring Formula -->
+<h2>Scoring Formula</h2>
+<div class="card">
+  <div class="formula">
+    <var>final_score</var> <span class="eq">=</span>
+    <span class="alpha">0.7</span> <span class="eq">&times;</span> <var>relevance</var>
+    <span class="eq">+</span> <span class="alpha">0.3</span> <span class="eq">&times;</span> <var>citizen_impact</var>
+  </div>
+  <p>Relevance comes from TF-IDF cosine similarity between your selected topics and the contract description. Citizen impact is a composite of four public-interest signals:</p>
+  <div class="stacked-bar">
+    <div style="width:30%; background: var(--color-accent);">30%</div>
+    <div style="width:30%; background: var(--color-danger);">30%</div>
+    <div style="width:20%; background: var(--color-warning);">20%</div>
+    <div style="width:20%; background: var(--color-purple);">20%</div>
+  </div>
+  <div class="legend">
+    <span><span class="legend-dot" style="background: var(--color-accent);"></span>GDELT news attention</span>
+    <span><span class="legend-dot" style="background: var(--color-danger);"></span>DOGE scrutiny</span>
+    <span><span class="legend-dot" style="background: var(--color-warning);"></span>1 - transparency</span>
+    <span><span class="legend-dot" style="background: var(--color-purple);"></span>log(contract value)</span>
+  </div>
+</div>
+
+<!-- TF-IDF Pipeline -->
+<h2>TF-IDF Pipeline</h2>
+<div class="card">
+  <p>When you select topics like "healthcare" or "defense," we expand each into a vocabulary of 8-12 seed keywords. For example, <em>healthcare</em> expands to: health, medical, hospital, patient, clinical, disease, nursing, medicaid, medicare, veterans.</p>
+  <p>These keywords are combined into a query and vectorized using TF-IDF (term frequency-inverse document frequency) with up to 15,000 features and bigrams. We then compute cosine similarity between your query vector and every contract description in the corpus.</p>
+  <p>The similarity score is blended with citizen impact using the alpha weight above. At alpha = 0.7, topic relevance dominates, but high-impact contracts get a meaningful boost.</p>
+</div>
+
+<!-- Feature Weights -->
+<h2>Feature Weights (Linear Baseline)</h2>
+<div class="card">
+  <p>A linear ranker trained on the same pairwise data as the neural model. These weights show which structural features predict DOGE scrutiny:</p>
+
+  <div class="feature-row">
+    <span class="feature-name">topic_match</span>
+    <div class="feature-bar-container">
+      <div class="feature-bar-center"></div>
+      <div class="feature-bar positive" style="left:50%; width:40%;"></div>
+    </div>
+    <span class="feature-value">+0.2096</span>
+  </div>
+  <div class="feature-row">
+    <span class="feature-name">norm_desc_length</span>
+    <div class="feature-bar-container">
+      <div class="feature-bar-center"></div>
+      <div class="feature-bar positive" style="left:50%; width:10%;"></div>
+    </div>
+    <span class="feature-value">+0.0523</span>
+  </div>
+  <div class="feature-row">
+    <span class="feature-name">transparency_score</span>
+    <div class="feature-bar-container">
+      <div class="feature-bar-center"></div>
+      <div class="feature-bar positive" style="left:50%; width:6%;"></div>
+    </div>
+    <span class="feature-value">+0.0314</span>
+  </div>
+  <div class="feature-row">
+    <span class="feature-name">embedding_similarity</span>
+    <div class="feature-bar-container">
+      <div class="feature-bar-center"></div>
+      <div class="feature-bar negative" style="right:50%; width:4%;"></div>
+    </div>
+    <span class="feature-value">-0.0200</span>
+  </div>
+  <div class="feature-row">
+    <span class="feature-name">log_value</span>
+    <div class="feature-bar-container">
+      <div class="feature-bar-center"></div>
+      <div class="feature-bar negative" style="right:50%; width:3.5%;"></div>
+    </div>
+    <span class="feature-value">-0.0185</span>
+  </div>
+  <div class="feature-row">
+    <span class="feature-name">bias</span>
+    <div class="feature-bar-container">
+      <div class="feature-bar-center"></div>
+    </div>
+    <span class="feature-value">-0.0000</span>
+  </div>
+
+  <p style="margin-top:16px;">Topic match is the dominant signal (+0.21), confirming that personalization drives the ranking. Structural features like contract value and embedding similarity contribute minimally, suggesting the DOGE scrutiny relationship is primarily topic-driven.</p>
+</div>
+
+<!-- Experiment Results -->
+<h2>Experiment Results</h2>
+<div class="card">
+  <p>We compared the classical TF-IDF model against a deep learning neural ranker (MLP trained with pairwise margin loss) across five user personas.</p>
+  <table>
+    <tr><th>Metric</th><th>Classical (TF-IDF)</th><th>Deep Learning (MLP)</th></tr>
+    <tr><td>Ranking method</td><td>TF-IDF + citizen impact</td><td>Sentence Transformer + MLP</td></tr>
+    <tr><td>Mean DOGE scrutiny</td><td class="highlight">0.703</td><td>0.399</td></tr>
+    <tr><td>Mean contract value</td><td>$54.8M</td><td class="highlight">$86.9M</td></tr>
+    <tr><td>Unique topics per persona</td><td class="highlight">3.2</td><td>1.4</td></tr>
+    <tr><td>Jaccard similarity (top-20)</td><td colspan="2" style="text-align:center;">0.052</td></tr>
+  </table>
+  <p>Jaccard of 0.052 means the two models share almost no recommendations. They are complementary: the classical model surfaces high-scrutiny items, the DL model surfaces high-value items.</p>
+
+  <p style="margin-top:16px; font-weight:600; color: var(--color-text-primary);">MLP vs Linear Baseline (pairwise accuracy)</p>
+  <table>
+    <tr><th>Tier</th><th>Description</th><th>MLP</th><th>Linear</th></tr>
+    <tr><td><span class="tag green">Tier 1</span></td><td>Easy pairs</td><td>0.998</td><td class="highlight">1.000</td></tr>
+    <tr><td><span class="tag warn">Tier 2</span></td><td>Within-topic</td><td>0.585</td><td class="highlight">0.712</td></tr>
+    <tr><td><span class="tag">Tier 3</span></td><td>Off-topic</td><td>0.584</td><td class="highlight">0.695</td></tr>
+    <tr><td></td><td>Overall</td><td>0.722</td><td class="highlight">0.811</td></tr>
+  </table>
+  <p>The linear baseline outperforms the MLP on all tiers. The feature-scrutiny relationship is approximately linear. The MLP's additional capacity leads to overfitting rather than better discrimination.</p>
+  <div style="margin-top:16px; padding:12px 16px; background:var(--color-accent-subtle); border-left:3px solid var(--color-accent); border-radius:var(--radius-md); font-size:0.9em; color:var(--color-text-secondary);">
+    <strong>Why classical TF-IDF is deployed:</strong> The team's evaluation found that the DL model achieves stronger precision and topic coverage through semantic matching (Sentence Transformer embeddings capture meaning beyond keyword overlap). However, the classical model was selected for production because a civic transparency tool benefits from explainable recommendations: reason strings, flag annotations, and direct incorporation of public-interest signals through the citizen impact score. The two models are complementary (5% overlap) and a future ensemble could combine both strengths.
+  </div>
+  <div style="margin-top:8px; padding:12px 16px; background:#faf5ee; border-left:3px solid var(--color-brand-highlight); border-radius:var(--radius-md); font-size:0.85em; color:var(--color-text-tertiary);">
+    <strong>Note on reproducibility:</strong> These results correspond to the saved model artifacts used by the deployed app. The NeurIPS paper reports results from a separate training run with different convergence behavior. The core conclusions hold across both runs: the linear baseline outperforms the MLP. This page reflects the deployed model.
+  </div>
+</div>
+
+<!-- Data Coverage -->
+<h2>Data Coverage</h2>
+<div class="card">
+  <div class="source-grid">
+    <div class="source-item"><strong>28,267</strong><span>Items tracked</span></div>
+    <div class="source-item"><strong>$272B</strong><span>Total value</span></div>
+    <div class="source-item"><strong>2,964</strong><span>DOGE-flagged</span></div>
+    <div class="source-item"><strong>39%</strong><span>With state data</span></div>
+  </div>
+  <p style="margin-top:12px; font-weight:600; color: var(--color-text-primary);">Sources</p>
+  <ul>
+    <li><strong>DOGE.gov</strong> - cancelled contracts, grants, and leases with scrutiny scores</li>
+    <li><strong>USAspending.gov</strong> - federal award details, agencies, and values</li>
+    <li><strong>GDELT</strong> - news article counts for media attention signals</li>
+    <li><strong>SAM.gov</strong> - entity registration and contract metadata</li>
+  </ul>
+  <p>Temporal range: January through October 2025. Geographic coverage spans all 50 states, with 39% of items having place-of-performance state data.</p>
+</div>
+
+<!-- Owl AI -->
+<h2>Owl AI Architecture</h2>
+<div class="card">
+  <p>The conversational assistant ("Owl") uses a two-model approach. Data from the dashboard is passed as context to ground responses in real numbers.</p>
+  <div class="ai-row">
+    <div class="ai-card">
+      <strong>LFM2.5-350M</strong>
+      <span>In-browser perception model. Runs locally via ONNX Runtime. Handles lightweight tasks without network calls.</span>
+    </div>
+    <div class="ai-card">
+      <strong>GPT-4o</strong>
+      <span>Authenticated reasoning model. Used for complex questions. Requires GitHub sign-in to access the free GitHub Models API quota.</span>
+    </div>
+  </div>
+  <p style="margin-top:12px;">Both models receive the current dashboard context (selected topic, contract stats, filters) as a structured prefix. This grounds the AI in real data and reduces hallucination. The AI cannot access data outside what the dashboard has already loaded.</p>
+</div>
+
+</div>
+</body>
+</html>
